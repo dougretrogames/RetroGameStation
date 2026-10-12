@@ -1,0 +1,2 @@
+-keep class org.retrostation.core.** { *; }
+-keep class org.retrogamestation.core.** { *; }

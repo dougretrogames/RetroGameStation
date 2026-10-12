@@ -1,0 +1,9 @@
+{
+    global:
+        Java_org_retrostation_engine_ppsspp_*;
+        Java_org_retrogamestation_engine_ppsspp_*;
+        JNI_OnLoad;
+        JNI_OnUnload;
+    local:
+        *;
+};

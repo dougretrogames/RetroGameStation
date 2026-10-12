@@ -1,0 +1,320 @@
+{
+  "@@locale": "pt_PT",
+  "appName": "Retro Game Station",
+  "commonOk": "OK",
+  "commonCancel": "Cancelar",
+  "commonSave": "Guardar",
+  "commonApply": "Aplicar",
+  "commonClose": "Fechar",
+  "commonBack": "Voltar",
+  "commonResetDefault": "Repor Predefinições",
+  "commonSearch": "Procurar jogos…",
+  "commonFilter": "Filtrar",
+  "commonSort": "Ordenar",
+  "commonEnabled": "Ativado",
+  "commonDisabled": "Desativado",
+  "commonNone": "Nenhum",
+  "commonAuto": "Automático",
+  "commonStatusReady": "Pronto",
+  "commonStatusError": "Erro",
+
+  "navGames": "Biblioteca de Jogos",
+  "navFavorites": "Favoritos",
+  "navRecent": "Jogados Recentemente",
+  "navSettings": "Definições",
+  "navDiagnostics": "Diagnósticos",
+
+  "systemArcade": "Arcada / FBNeo",
+  "systemNes": "Nintendo Entertainment System (NES)",
+  "systemSnes": "Super Nintendo (SNES)",
+  "systemN64": "Nintendo 64",
+  "systemGb": "Game Boy",
+  "systemGbc": "Game Boy Color",
+  "systemGba": "Game Boy Advance",
+  "systemNds": "Nintendo DS",
+  "systemSms": "Sega Master System",
+  "systemGenesis": "Sega Mega Drive / Genesis",
+  "systemSaturn": "Sega Saturn",
+  "systemDreamcast": "Sega Dreamcast",
+  "systemPsx": "Sony PlayStation (PS1)",
+  "systemPsp": "Sony PlayStation Portable (PSP)",
+
+  "categoryVideoSettings": "Definições de Vídeo e Ecrã",
+  "settingGraphicsApi": "Motor Gráfico (Backend)",
+  "settingGraphicsApiDesc": "Selecione o motor de renderização (Vulkan recomendado para menor latência)",
+  "graphicsApiVulkan": "Vulkan (Moderno, Baixa Sobrecarga)",
+  "graphicsApiGles": "OpenGL ES (Elevada Compatibilidade)",
+  "settingInternalResolution": "Resolução Interna",
+  "settingInternalResolutionDesc": "Multiplica a resolução 3D para obter contornos mais nítidos",
+  "resNative": "1x Nativa (Resolução Original)",
+  "res720p": "2x 720p HD",
+  "res1080p": "3x 1080p Full HD",
+  "res1440p": "4x 1440p 2K",
+  "res4k": "5x 2160p 4K UHD",
+  "settingAspectRatio": "Proporção de Ecrã (Aspect Ratio)",
+  "settingAspectRatioDesc": "Controla a geometria de apresentação e as barras laterais",
+  "aspectCoreProvided": "Original do Núcleo",
+  "aspect43": "4:3 Tubo CRT Padrão",
+  "aspect169": "16:9 Panorâmico",
+  "aspect11": "1:1 Píxel Quadrado",
+  "aspectFullscreen": "Esticar para o Ecrã Inteiro",
+  "settingIntegerScaling": "Escala Inteira (Pixel Perfect)",
+  "settingIntegerScalingDesc": "Multiplica os píxeis por fatores inteiros preservando a nitidez",
+  "settingVsync": "Sincronização Vertical (V-Sync)",
+  "settingVsyncDesc": "Sincroniza os fotogramas com a taxa de atualização do ecrã",
+  "settingRefreshRate": "Taxa de Atualização do Ecrã",
+  "settingRefreshRateDesc": "Corresponde ao modo do ecrã do dispositivo (60Hz / 120Hz)",
+  "settingShaderPreset": "Shaders de Vídeo e Filtros",
+  "settingShaderPresetDesc": "Aplica filtros de pós-processamento gráfico em tempo real",
+  "shaderNone": "Nenhum (Píxeis Puros)",
+  "shaderCrtGeom": "CRT-Geom (Monitor CRT Curvo)",
+  "shaderCrtRoyale": "CRT-Royale (Trinitron Fotorrealista)",
+  "shaderScanlines": "Linhas de Varrimento (Scanlines)",
+  "shaderXbrz": "xBRZ 4x (Interpolação Vetorial Suave)",
+  "shaderSharpBilinear": "Sharp Bilinear (Nitidez sem desfoque)",
+  "shaderLcd3x": "LCD 3x (Grelha de Consola Portátil)",
+  "settingFrameSkip": "Salto de Fotogramas (Frame Skip)",
+  "settingFrameSkipDesc": "Omite fotogramas para manter a velocidade em dispositivos mais modestos",
+  "settingBfi": "Inserção de Fotogramas Negros (BFI)",
+  "settingBfiDesc": "Insere ecrãs negros a 120Hz para atenuar o desfoque de movimento",
+
+  "categoryAudioSettings": "Definições de Áudio",
+  "settingAudioEngine": "Motor de Áudio",
+  "settingAudioEngineDesc": "Controlador de som em tempo real com latência reduzida",
+  "audioEngineAaudio": "AAudio (Latência Ultrabaixa)",
+  "audioEngineOpensles": "OpenSL ES (Compatibilidade Legada)",
+  "settingAudioLatencyMode": "Perfil de Memória Intermédia (Buffer)",
+  "settingAudioLatencyModeDesc": "Dimensão dos blocos de transmissão sonora",
+  "latencyUltraLow": "Ultrabaixa (2 Blocos ~10-15ms)",
+  "latencyLow": "Baixa (3 Blocos ~20-25ms)",
+  "latencySafe": "Segura (4 Blocos ~35ms, Sem Estalidos)",
+  "settingAudioExclusive": "Modo Exclusivo AAudio",
+  "settingAudioExclusiveDesc": "Evita o misturador do Android para alcançar a menor latência",
+  "settingDynamicRateControl": "Controlo Dinâmico de Frequência (DRC)",
+  "settingDynamicRateControlDesc": "Ajusta com subtileza a velocidade de som para prevenir dessincronia",
+  "settingAudioResampler": "Qualidade da Reamostragem",
+  "settingAudioResamplerDesc": "Algoritmo de conversão da taxa de amostragem sonora",
+  "resamplerSinc": "Sinc (Máxima Fidelidade Sonora)",
+  "resamplerHermite": "Hermite (Equilibrado)",
+  "resamplerNearest": "Vizinho Mais Próximo (Mais Rápido)",
+  "settingMuteOnFastForward": "Silenciar no Avanço Rápido",
+  "settingMuteOnFastForwardDesc": "Corta o som enquanto o avanço rápido estiver ativo",
+  "settingVolumeGain": "Ganho Geral de Volume",
+  "settingVolumeGainDesc": "Multiplicador pré-amplificador de som (100% é normal)",
+
+  "categoryControllerSettings": "Comandos e Calibração de Entrada",
+  "settingDetectedGamepads": "Comandos Detetados",
+  "settingPlayerAssignment": "Atribuição de Jogador",
+  "settingAnalogDeadzone": "Zona Morta dos Manípulos Analógicos",
+  "settingAnalogDeadzoneDesc": "Margem interior para suprimir desvios involuntários",
+  "settingTriggerThreshold": "Sensibilidade dos Gatilhos",
+  "settingTriggerThresholdDesc": "Ponto de acionamento para os gatilhos analógicos L2/R2",
+  "settingRumble": "Vibração e Resposta Háptica (Rumble)",
+  "settingRumbleDesc": "Intensidade dos motores de vibração do comando",
+  "rumbleOff": "Desligada",
+  "rumbleLight": "Suave",
+  "rumbleMedium": "Média",
+  "rumbleStrong": "Forte",
+  "settingRemapButtons": "Mapeamento de Botões",
+  "settingRemapButtonsDesc": "Personalize a função de cada botão físico",
+  "settingTouchControls": "Controlos Táteis no Ecrã",
+  "settingTouchControlsDesc": "Apresentar botões no ecrã tátil",
+  "settingTouchOpacity": "Opacidade dos Botões Táteis",
+  "settingTouchHaptics": "Vibração Háptica ao Tocar no Ecrã",
+
+  "categoryHotkeySettings": "Configuração de Atalhos Globais",
+  "hotkeyInfoDesc": "Combinações padronizadas intercetadas antes de chegarem à emulação, iguais em todos os motores.",
+  "settingHotkeyModifier": "Botão Modificador de Atalho",
+  "settingHotkeyModifierDesc": "Botão principal premido em conjunto para acionar os atalhos",
+  "btnSelect": "Botão SELECT",
+  "btnGuide": "Botão GUIA / Home / Xbox",
+  "btnL3": "L3 (Premir Manípulo Esquerdo)",
+  "btnR3": "R3 (Premir Manípulo Direito)",
+  "settingHotkeyQuickMenu": "Menu Rápido no Jogo",
+  "comboHotkeyQuickMenu": "Atalho + X (Botão Norte)",
+  "settingHotkeySaveState": "Guardar Estado",
+  "comboHotkeySaveState": "Atalho + R1",
+  "settingHotkeyLoadState": "Carregar Estado",
+  "comboHotkeyLoadState": "Atalho + L1",
+  "settingHotkeyFastForward": "Alternar Avanço Rápido",
+  "comboHotkeyFastForward": "Atalho + R2",
+  "settingHotkeyRewind": "Alternar Rebobinagem (Rewind)",
+  "comboHotkeyRewind": "Atalho + L2",
+  "settingHotkeyQuit": "Sair para o Lançador",
+  "comboHotkeyQuit": "Atalho + START",
+  "settingHotkeySlotUp": "Ranhura de Gravação Seguinte",
+  "comboHotkeySlotUp": "Atalho + D-Pad CIMA",
+  "settingHotkeySlotDown": "Ranhura de Gravação Anterior",
+  "comboHotkeySlotDown": "Atalho + D-Pad BAIXO",
+  "settingHotkeyShaderNext": "Shader Seguinte",
+  "comboHotkeyShaderNext": "Atalho + D-Pad DIREITA",
+  "settingHotkeyShaderPrev": "Shader Anterior",
+  "comboHotkeyShaderPrev": "Atalho + D-Pad ESQUERDA",
+  "settingHotkeyPause": "Pausar / Retomar Emulação",
+  "comboHotkeyPause": "Atalho + Y",
+  "settingHotkeyReset": "Reiniciar Jogo",
+  "comboHotkeyReset": "Atalho + B",
+  "settingHotkeyScreenshot": "Capturar Imagem de Ecrã",
+  "comboHotkeyScreenshot": "Atalho + R3",
+
+  "categoryStorageSettings": "Acesso ao Armazenamento e Pastas",
+  "storageSafBannerTitle": "Compatível com Scoped Storage (Android 11+ / API 30+)",
+  "storageSafBannerDesc": "Descritores diretos (FD) nativos para o melhor desempenho sem cópias adicionais de ROMs.",
+  "settingRomDirectory": "Pasta de Jogos (ROMs)",
+  "settingRomDirectoryDesc": "Escolha a pasta principal através do Storage Access Framework",
+  "settingSavesDirectory": "Pasta de Gravações de Bateria (SRAM)",
+  "pathSavesDefault": "/files/saves/{system}/ (Isolada na Aplicação)",
+  "settingStatesDirectory": "Pasta de Estados Gravados (States)",
+  "pathStatesDefault": "/files/states/{system}/ (Isolada na Aplicação)",
+  "settingShadersDirectory": "Pasta de Shaders",
+  "pathShadersDefault": "/files/shaders/",
+  "settingBiosDirectory": "Pasta de Ficheiros BIOS",
+  "pathBiosDefault": "/files/bios/",
+  "btnSelectFolder": "Selecionar Pasta",
+  "btnExportSaves": "Exportar Gravações para Armazenamento Externo",
+  "btnImportSaves": "Importar Gravações do Armazenamento",
+  "dialogBiosCheckTitle": "Verificação de Integridade das BIOS",
+  "dialogBiosMissingWarning": "Aviso: A falta de ficheiros de BIOS pode causar falhas na emulação.",
+  "statusBiosValid": "Válido (Checksum Correto)",
+  "statusBiosInvalid": "Incompatível (Ficheiro Incorreto)",
+  "statusBiosMissing": "Ficheiro em Falta",
+
+  "categoryScrapingSettings": "Descarga de Capas e Informação (Scraper)",
+  "settingScraperSource": "Fonte de Metadados",
+  "scraperScreenscraper": "ScreenScraper.fr",
+  "scraperThegamesdb": "TheGamesDB.net",
+  "scraperArcadedb": "ArcadeDB",
+  "settingScraperAccount": "Conta do Serviço de Obtenção",
+  "settingScrapeMediaTypes": "Tipos de Multimédia a Transferir",
+  "mediaBoxart": "Capas 2D e Caixas 3D",
+  "mediaMarquees": "Logótipos de Arcada (Marquees)",
+  "mediaScreenshots": "Capturas de Ecrã de Jogos",
+  "mediaSynopsis": "Sinopses e Classificações",
+  "settingScrapeLanguage": "Idioma Preferencial dos Metadados",
+  "settingScrapeMissingOnly": "Transferir Apenas Itens em Falta",
+  "btnStartScraping": "Iniciar Obtenção de Capas",
+  "btnStopScraping": "Cancelar Obtenção",
+  "scrapingProgress": "A transferir dados: {current} de {total} jogos ({title})…",
+  "@scrapingProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"},
+      "title": {"type": "String"}
+    }
+  },
+  "scrapingComplete": "Obtenção de metadados da biblioteca concluída.",
+
+  "categoryCloudSync": "Sincronização na Nuvem (Cloud Saves)",
+  "settingCloudProvider": "Fornecedor de Nuvem",
+  "providerNextcloud": "Nextcloud / ownCloud",
+  "providerWebdav": "Servidor WebDAV Genérico",
+  "providerGdrive": "Google Drive",
+  "providerDropbox": "Dropbox",
+  "settingCloudServerUrl": "Endereço URL do Servidor",
+  "settingCloudCredentials": "Credenciais e Chave de Acesso",
+  "settingAutoSyncExit": "Sincronizar Automaticamente ao Sair do Jogo",
+  "settingAutoSyncExitDesc": "Transfere logo as novas gravações ao encerrar a emulação",
+  "settingSyncStates": "Incluir Estados Gravados na Sincronização",
+  "settingSyncStatesDesc": "Aviso: Os estados gravados podem ser volumosos e demorar mais tempo",
+  "settingConflictResolution": "Política em Caso de Conflito",
+  "conflictKeepNewest": "Manter o Mais Recente (Recomendado)",
+  "conflictAsk": "Perguntar Sempre",
+  "conflictLocal": "Privilegiar Sempre o Ficheiro Local",
+  "conflictRemote": "Privilegiar Sempre o Ficheiro da Nuvem",
+  "btnForceSync": "Sincronizar Agora",
+  "cloudStatusSynced": "Sincronizado",
+  "cloudStatusSyncing": "A sincronizar gravações…",
+  "cloudStatusOffline": "Desligado (sincronizará quando houver ligação)",
+  "cloudStatusConflict": "Detetado conflito de ficheiros",
+
+  "quickMenuTitle": "Menu Rápido no Jogo",
+  "quickMenuResume": "Retomar Emulação",
+  "quickMenuSaveState": "Guardar Estado (Ranhura {slot})",
+  "@quickMenuSaveState": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "quickMenuLoadState": "Carregar Estado (Ranhura {slot})",
+  "@quickMenuLoadState": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "quickMenuChangeSlot": "Mudar Ranhura Ativa (Atual: {slot})",
+  "@quickMenuChangeSlot": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "quickMenuFastForward": "Avanço Rápido [{status}]",
+  "@quickMenuFastForward": {
+    "placeholders": {
+      "status": {"type": "String"}
+    }
+  },
+  "quickMenuTakeScreenshot": "Capturar Imagem de Ecrã",
+  "quickMenuResetGame": "Reiniciar Jogo",
+  "quickMenuCoreOptions": "Opções Específicas do Núcleo",
+  "quickMenuShaders": "Shaders de Vídeo",
+  "quickMenuControls": "Mapear Controlos",
+  "quickMenuCheats": "Batotas e Códigos (Cheats)",
+  "quickMenuQuitLauncher": "Sair para o Lançador",
+  "titleSelectSlot": "Selecione a Ranhura de Gravação",
+
+  "msgStateSaved": "Estado guardado na Ranhura {slot}",
+  "@msgStateSaved": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "msgStateLoaded": "Estado carregado da Ranhura {slot}",
+  "@msgStateLoaded": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "msgSlotSelected": "Ranhura ativa alterada para {slot}",
+  "@msgSlotSelected": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "msgFastForwardOn": "Avanço Rápido: ATIVADO",
+  "msgFastForwardOff": "Avanço Rápido: DESATIVADO",
+  "msgRewindOn": "Rebobinagem: ATIVADA",
+  "msgRewindOff": "Rebobinagem: DESATIVADA",
+  "msgEmulationPaused": "Emulação em Pausa",
+  "msgEmulationResumed": "Emulação Retomada",
+  "msgEmulationReset": "Jogo Reiniciado",
+  "msgScreenshotSaved": "Imagem de ecrã capturada com sucesso",
+  "msgNextShader": "Shader de vídeo alterado",
+  "msgPrevShader": "Shader anterior reposto",
+
+  "diagTitle": "Diagnósticos e Telemetria em Tempo Real",
+  "diagFps": "Taxa de Fotogramas (FPS): {fps}",
+  "@diagFps": {
+    "placeholders": {
+      "fps": {"type": "double"}
+    }
+  },
+  "diagAudioLatency": "Latência de Áudio: {latency} ms",
+  "@diagAudioLatency": {
+    "placeholders": {
+      "latency": {"type": "double"}
+    }
+  },
+  "diagAudioXruns": "Falhas de Áudio (XRuns): {xruns}",
+  "@diagAudioXruns": {
+    "placeholders": {
+      "xruns": {"type": "int"}
+    }
+  },
+  "diagSurfaceDims": "Resolução do Ecrã: {width} x {height}",
+  "@diagSurfaceDims": {
+    "placeholders": {
+      "width": {"type": "int"},
+      "height": {"type": "int"}
+    }
+  }
+}

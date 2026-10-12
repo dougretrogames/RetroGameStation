@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Application & General Navigation -->
+    <string name="app_name">Retro Game Station</string>
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_save">Guardar</string>
+    <string name="common_apply">Aplicar</string>
+    <string name="common_close">Fechar</string>
+    <string name="common_back">Voltar</string>
+    <string name="common_reset_default">Repor Predefinições</string>
+    <string name="common_search">Procurar jogos…</string>
+    <string name="common_filter">Filtrar</string>
+    <string name="common_sort">Ordenar</string>
+    <string name="common_enabled">Ativado</string>
+    <string name="common_disabled">Desativado</string>
+    <string name="common_none">Nenhum</string>
+    <string name="common_auto">Automático</string>
+    <string name="common_status_ready">Pronto</string>
+    <string name="common_status_error">Erro</string>
+
+    <!-- Navigation Tabs / Sections -->
+    <string name="nav_games">Biblioteca de Jogos</string>
+    <string name="nav_favorites">Favoritos</string>
+    <string name="nav_recent">Jogados Recentemente</string>
+    <string name="nav_settings">Definições</string>
+    <string name="nav_diagnostics">Diagnósticos</string>
+
+    <!-- Emulation Systems -->
+    <string name="system_arcade">Arcada / FBNeo</string>
+    <string name="system_nes">Nintendo Entertainment System (NES)</string>
+    <string name="system_snes">Super Nintendo (SNES)</string>
+    <string name="system_n64">Nintendo 64</string>
+    <string name="system_gb">Game Boy</string>
+    <string name="system_gbc">Game Boy Color</string>
+    <string name="system_gba">Game Boy Advance</string>
+    <string name="system_nds">Nintendo DS</string>
+    <string name="system_sms">Sega Master System</string>
+    <string name="system_genesis">Sega Mega Drive / Genesis</string>
+    <string name="system_saturn">Sega Saturn</string>
+    <string name="system_dreamcast">Sega Dreamcast</string>
+    <string name="system_psx">Sony PlayStation (PS1)</string>
+    <string name="system_psp">Sony PlayStation Portable (PSP)</string>
+
+    <!-- Video & Display Settings -->
+    <string name="category_video_settings">Definições de Vídeo e Ecrã</string>
+    <string name="setting_graphics_api">Motor Gráfico (Backend)</string>
+    <string name="setting_graphics_api_desc">Selecione o motor de renderização (Vulkan recomendado para menor latência)</string>
+    <string name="graphics_api_vulkan">Vulkan (Moderno, Baixa Sobrecarga)</string>
+    <string name="graphics_api_gles">OpenGL ES (Elevada Compatibilidade)</string>
+    <string name="setting_internal_resolution">Resolução Interna</string>
+    <string name="setting_internal_resolution_desc">Multiplica a resolução 3D para obter contornos mais nítidos</string>
+    <string name="res_native">1x Nativa (Resolução Original)</string>
+    <string name="res_720p">2x 720p HD</string>
+    <string name="res_1080p">3x 1080p Full HD</string>
+    <string name="res_1440p">4x 1440p 2K</string>
+    <string name="res_4k">5x 2160p 4K UHD</string>
+    <string name="setting_aspect_ratio">Proporção de Ecrã (Aspect Ratio)</string>
+    <string name="setting_aspect_ratio_desc">Controla a geometria de apresentação e as barras laterais</string>
+    <string name="aspect_core_provided">Original do Núcleo</string>
+    <string name="aspect_4_3">4:3 Tubo CRT Padrão</string>
+    <string name="aspect_16_9">16:9 Panorâmico</string>
+    <string name="aspect_1_1">1:1 Píxel Quadrado</string>
+    <string name="aspect_fullscreen">Esticar para o Ecrã Inteiro</string>
+    <string name="setting_integer_scaling">Escala Inteira (Pixel Perfect)</string>
+    <string name="setting_integer_scaling_desc">Multiplica os píxeis por fatores inteiros preservando a nitidez</string>
+    <string name="setting_vsync">Sincronização Vertical (V-Sync)</string>
+    <string name="setting_vsync_desc">Sincroniza os fotogramas com a taxa de atualização do ecrã</string>
+    <string name="setting_refresh_rate">Taxa de Atualização do Ecrã</string>
+    <string name="setting_refresh_rate_desc">Corresponde ao modo do ecrã do dispositivo (60Hz / 120Hz)</string>
+    <string name="setting_shader_preset">Shaders de Vídeo e Filtros</string>
+    <string name="setting_shader_preset_desc">Aplica filtros de pós-processamento gráfico em tempo real</string>
+    <string name="shader_none">Nenhum (Píxeis Puros)</string>
+    <string name="shader_crt_geom">CRT-Geom (Monitor CRT Curvo)</string>
+    <string name="shader_crt_royale">CRT-Royale (Trinitron Fotorrealista)</string>
+    <string name="shader_scanlines">Linhas de Varrimento (Scanlines)</string>
+    <string name="shader_xbrz">xBRZ 4x (Interpolação Vetorial Suave)</string>
+    <string name="shader_sharp_bilinear">Sharp Bilinear (Nitidez sem desfoque)</string>
+    <string name="shader_lcd3x">LCD 3x (Grelha de Consola Portátil)</string>
+    <string name="setting_frame_skip">Salto de Fotogramas (Frame Skip)</string>
+    <string name="setting_frame_skip_desc">Omite fotogramas para manter a velocidade em dispositivos mais modestos</string>
+    <string name="setting_bfi">Inserção de Fotogramas Negros (BFI)</string>
+    <string name="setting_bfi_desc">Insere ecrãs negros a 120Hz para atenuar o desfoque de movimento</string>
+
+    <!-- Audio Settings -->
+    <string name="category_audio_settings">Definições de Áudio</string>
+    <string name="setting_audio_engine">Motor de Áudio</string>
+    <string name="setting_audio_engine_desc">Controlador de som em tempo real com latência reduzida</string>
+    <string name="audio_engine_aaudio">AAudio (Latência Ultrabaixa)</string>
+    <string name="audio_engine_opensles">OpenSL ES (Compatibilidade Legada)</string>
+    <string name="setting_audio_latency_mode">Perfil de Memória Intermédia (Buffer)</string>
+    <string name="setting_audio_latency_mode_desc">Dimensão dos blocos de transmissão sonora</string>
+    <string name="latency_ultra_low">Ultrabaixa (2 Blocos ~10-15ms)</string>
+    <string name="latency_low">Baixa (3 Blocos ~20-25ms)</string>
+    <string name="latency_safe">Segura (4 Blocos ~35ms, Sem Estalidos)</string>
+    <string name="setting_audio_exclusive">Modo Exclusivo AAudio</string>
+    <string name="setting_audio_exclusive_desc">Evita o misturador do Android para alcançar a menor latência</string>
+    <string name="setting_dynamic_rate_control">Controlo Dinâmico de Frequência (DRC)</string>
+    <string name="setting_dynamic_rate_control_desc">Ajusta com subtileza a velocidade de som para prevenir dessincronia</string>
+    <string name="setting_audio_resampler">Qualidade da Reamostragem</string>
+    <string name="setting_audio_resampler_desc">Algoritmo de conversão da taxa de amostragem sonora</string>
+    <string name="resampler_sinc">Sinc (Máxima Fidelidade Sonora)</string>
+    <string name="resampler_hermite">Hermite (Equilibrado)</string>
+    <string name="resampler_nearest">Vizinho Mais Próximo (Mais Rápido)</string>
+    <string name="setting_mute_on_fast_forward">Silenciar no Avanço Rápido</string>
+    <string name="setting_mute_on_fast_forward_desc">Corta o som enquanto o avanço rápido estiver ativo</string>
+    <string name="setting_volume_gain">Ganho Geral de Volume</string>
+    <string name="setting_volume_gain_desc">Multiplicador pré-amplificador de som (100% é normal)</string>
+
+    <!-- Controller Calibration & Input -->
+    <string name="category_controller_settings">Comandos e Calibração de Entrada</string>
+    <string name="setting_detected_gamepads">Comandos Detetados</string>
+    <string name="setting_player_assignment">Atribuição de Jogador</string>
+    <string name="setting_analog_deadzone">Zona Morta dos Manípulos Analógicos</string>
+    <string name="setting_analog_deadzone_desc">Margem interior para suprimir desvios involuntários</string>
+    <string name="setting_trigger_threshold">Sensibilidade dos Gatilhos</string>
+    <string name="setting_trigger_threshold_desc">Ponto de acionamento para os gatilhos analógicos L2/R2</string>
+    <string name="setting_rumble">Vibração e Resposta Háptica (Rumble)</string>
+    <string name="setting_rumble_desc">Intensidade dos motores de vibração do comando</string>
+    <string name="rumble_off">Desligada</string>
+    <string name="rumble_light">Suave</string>
+    <string name="rumble_medium">Média</string>
+    <string name="rumble_strong">Forte</string>
+    <string name="setting_remap_buttons">Mapeamento de Botões</string>
+    <string name="setting_remap_buttons_desc">Personalize a função de cada botão físico</string>
+    <string name="setting_touch_controls">Controlos Táteis no Ecrã</string>
+    <string name="setting_touch_controls_desc">Apresentar botões no ecrã tátil</string>
+    <string name="setting_touch_opacity">Opacidade dos Botões Táteis</string>
+    <string name="setting_touch_haptics">Vibração Háptica ao Tocar no Ecrã</string>
+
+    <!-- Global Hotkeys Configuration -->
+    <string name="category_hotkey_settings">Configuração de Atalhos Globais</string>
+    <string name="hotkey_info_desc">Combinações padronizadas intercetadas antes de chegarem à emulação, iguais em todos os motores.</string>
+    <string name="setting_hotkey_modifier">Botão Modificador de Atalho</string>
+    <string name="setting_hotkey_modifier_desc">Botão principal premido em conjunto para acionar os atalhos</string>
+    <string name="btn_select">Botão SELECT</string>
+    <string name="btn_guide">Botão GUIA / Home / Xbox</string>
+    <string name="btn_l3">L3 (Premir Manípulo Esquerdo)</string>
+    <string name="btn_r3">R3 (Premir Manípulo Direito)</string>
+    <string name="setting_hotkey_quick_menu">Menu Rápido no Jogo</string>
+    <string name="combo_hotkey_quick_menu">Atalho + X (Botão Norte)</string>
+    <string name="setting_hotkey_save_state">Guardar Estado</string>
+    <string name="combo_hotkey_save_state">Atalho + R1</string>
+    <string name="setting_hotkey_load_state">Carregar Estado</string>
+    <string name="combo_hotkey_load_state">Atalho + L1</string>
+    <string name="setting_hotkey_fast_forward">Alternar Avanço Rápido</string>
+    <string name="combo_hotkey_fast_forward">Atalho + R2</string>
+    <string name="setting_hotkey_rewind">Alternar Rebobinagem (Rewind)</string>
+    <string name="combo_hotkey_rewind">Atalho + L2</string>
+    <string name="setting_hotkey_quit">Sair para o Lançador</string>
+    <string name="combo_hotkey_quit">Atalho + START</string>
+    <string name="setting_hotkey_slot_up">Ranhura de Gravação Seguinte</string>
+    <string name="combo_hotkey_slot_up">Atalho + D-Pad CIMA</string>
+    <string name="setting_hotkey_slot_down">Ranhura de Gravação Anterior</string>
+    <string name="combo_hotkey_slot_down">Atalho + D-Pad BAIXO</string>
+    <string name="setting_hotkey_shader_next">Shader Seguinte</string>
+    <string name="combo_hotkey_shader_next">Atalho + D-Pad DIREITA</string>
+    <string name="setting_hotkey_shader_prev">Shader Anterior</string>
+    <string name="combo_hotkey_shader_prev">Atalho + D-Pad ESQUERDA</string>
+    <string name="setting_hotkey_pause">Pausar / Retomar Emulação</string>
+    <string name="combo_hotkey_pause">Atalho + Y</string>
+    <string name="setting_hotkey_reset">Reiniciar Jogo</string>
+    <string name="combo_hotkey_reset">Atalho + B</string>
+    <string name="setting_hotkey_screenshot">Capturar Imagem de Ecrã</string>
+    <string name="combo_hotkey_screenshot">Atalho + R3</string>
+
+    <!-- Scoped Storage & Persistence (SAF) -->
+    <string name="category_storage_settings">Acesso ao Armazenamento e Pastas</string>
+    <string name="storage_saf_banner_title">Compatível com Scoped Storage (Android 11+ / API 30+)</string>
+    <string name="storage_saf_banner_desc">Descritores diretos (FD) nativos para o melhor desempenho sem cópias adicionais de ROMs.</string>
+    <string name="setting_rom_directory">Pasta de Jogos (ROMs)</string>
+    <string name="setting_rom_directory_desc">Escolha a pasta principal através do Storage Access Framework</string>
+    <string name="setting_saves_directory">Pasta de Gravações de Bateria (SRAM)</string>
+    <string name="path_saves_default">/files/saves/{sistema}/ (Isolada na Aplicação)</string>
+    <string name="setting_states_directory">Pasta de Estados Gravados (States)</string>
+    <string name="path_states_default">/files/states/{sistema}/ (Isolada na Aplicação)</string>
+    <string name="setting_shaders_directory">Pasta de Shaders</string>
+    <string name="path_shaders_default">/files/shaders/</string>
+    <string name="setting_bios_directory">Pasta de Ficheiros BIOS</string>
+    <string name="path_bios_default">/files/bios/</string>
+    <string name="btn_select_folder">Selecionar Pasta</string>
+    <string name="btn_export_saves">Exportar Gravações para Armazenamento Externo</string>
+    <string name="btn_import_saves">Importar Gravações do Armazenamento</string>
+    <string name="dialog_bios_check_title">Verificação de Integridade das BIOS</string>
+    <string name="dialog_bios_missing_warning">Aviso: A falta de ficheiros de BIOS pode causar falhas na emulação.</string>
+    <string name="status_bios_valid">Válido (Checksum Correto)</string>
+    <string name="status_bios_invalid">Incompatível (Ficheiro Incorreto)</string>
+    <string name="status_bios_missing">Ficheiro em Falta</string>
+
+    <!-- ROM Scraping & Metadata -->
+    <string name="category_scraping_settings">Descarga de Capas e Informação (Scraper)</string>
+    <string name="setting_scraper_source">Fonte de Metadados</string>
+    <string name="scraper_screenscraper">ScreenScraper.fr</string>
+    <string name="scraper_thegamesdb">TheGamesDB.net</string>
+    <string name="scraper_arcadedb">ArcadeDB</string>
+    <string name="setting_scraper_account">Conta do Serviço de Obtenção</string>
+    <string name="setting_scrape_media_types">Tipos de Multimédia a Transferir</string>
+    <string name="media_boxart">Capas 2D e Caixas 3D</string>
+    <string name="media_marquees">Logótipos de Arcada (Marquees)</string>
+    <string name="media_screenshots">Capturas de Ecrã de Jogos</string>
+    <string name="media_synopsis">Sinopses e Classificações</string>
+    <string name="setting_scrape_language">Idioma Preferencial dos Metadados</string>
+    <string name="setting_scrape_missing_only">Transferir Apenas Itens em Falta</string>
+    <string name="btn_start_scraping">Iniciar Obtenção de Capas</string>
+    <string name="btn_stop_scraping">Cancelar Obtenção</string>
+    <string name="scraping_progress">A transferir dados: %1$d de %2$d jogos (%3$s)…</string>
+    <string name="scraping_complete">Obtenção de metadados da biblioteca concluída.</string>
+
+    <!-- Cloud Sync -->
+    <string name="category_cloud_sync">Sincronização na Nuvem (Cloud Saves)</string>
+    <string name="setting_cloud_provider">Fornecedor de Nuvem</string>
+    <string name="provider_nextcloud">Nextcloud / ownCloud</string>
+    <string name="provider_webdav">Servidor WebDAV Genérico</string>
+    <string name="provider_gdrive">Google Drive</string>
+    <string name="provider_dropbox">Dropbox</string>
+    <string name="setting_cloud_server_url">Endereço URL do Servidor</string>
+    <string name="setting_cloud_credentials">Credenciais e Chave de Acesso</string>
+    <string name="setting_auto_sync_exit">Sincronizar Automaticamente ao Sair do Jogo</string>
+    <string name="setting_auto_sync_exit_desc">Transfere logo as novas gravações ao encerrar a emulação</string>
+    <string name="setting_sync_states">Incluir Estados Gravados na Sincronização</string>
+    <string name="setting_sync_states_desc">Aviso: Os estados gravados podem ser volumosos e demorar mais tempo</string>
+    <string name="setting_conflict_resolution">Política em Caso de Conflito</string>
+    <string name="conflict_keep_newest">Manter o Mais Recente (Recomendado)</string>
+    <string name="conflict_ask">Perguntar Sempre</string>
+    <string name="conflict_local">Privilegiar Sempre o Ficheiro Local</string>
+    <string name="conflict_remote">Privilegiar Sempre o Ficheiro da Nuvem</string>
+    <string name="btn_force_sync">Sincronizar Agora</string>
+    <string name="cloud_status_synced">Sincronizado</string>
+    <string name="cloud_status_syncing">A sincronizar gravações…</string>
+    <string name="cloud_status_offline">Desligado (sincronizará quando houver ligação)</string>
+    <string name="cloud_status_conflict">Detetado conflito de ficheiros</string>
+
+    <!-- In-Game Quick Menu & Overlays -->
+    <string name="quick_menu_title">Menu Rápido no Jogo</string>
+    <string name="quick_menu_resume">Retomar Emulação</string>
+    <string name="quick_menu_save_state">Guardar Estado (Ranhura %1$d)</string>
+    <string name="quick_menu_load_state">Carregar Estado (Ranhura %1$d)</string>
+    <string name="quick_menu_change_slot">Mudar Ranhura Ativa (Atual: %1$d)</string>
+    <string name="quick_menu_fast_forward">Avanço Rápido [%1$s]</string>
+    <string name="quick_menu_take_screenshot">Capturar Imagem de Ecrã</string>
+    <string name="quick_menu_reset_game">Reiniciar Jogo</string>
+    <string name="quick_menu_core_options">Opções Específicas do Núcleo</string>
+    <string name="quick_menu_shaders">Shaders de Vídeo</string>
+    <string name="quick_menu_controls">Mapear Controlos</string>
+    <string name="quick_menu_cheats">Batotas e Códigos (Cheats)</string>
+    <string name="quick_menu_quit_launcher">Sair para o Lançador</string>
+    <string name="title_select_slot">Selecione a Ranhura de Gravação</string>
+
+    <!-- In-Game HUD Toast Notifications -->
+    <string name="msg_state_saved">Estado guardado na Ranhura %1$d</string>
+    <string name="msg_state_loaded">Estado carregado da Ranhura %1$d</string>
+    <string name="msg_slot_selected">Ranhura ativa alterada para %1$d</string>
+    <string name="msg_fast_forward_on">Avanço Rápido: ATIVADO</string>
+    <string name="msg_fast_forward_off">Avanço Rápido: DESATIVADO</string>
+    <string name="msg_rewind_on">Rebobinagem: ATIVADA</string>
+    <string name="msg_rewind_off">Rebobinagem: DESATIVADA</string>
+    <string name="msg_emulation_paused">Emulação em Pausa</string>
+    <string name="msg_emulation_resumed">Emulação Retomada</string>
+    <string name="msg_emulation_reset">Jogo Reiniciado</string>
+    <string name="msg_screenshot_saved">Imagem de ecrã capturada com sucesso</string>
+    <string name="msg_next_shader">Shader de vídeo alterado</string>
+    <string name="msg_prev_shader">Shader anterior reposto</string>
+
+    <!-- Diagnostics & Engine Information -->
+    <string name="diag_title">Diagnósticos e Telemetria em Tempo Real</string>
+    <string name="diag_fps">Taxa de Fotogramas (FPS): %1$.1f</string>
+    <string name="diag_audio_latency">Latência de Áudio: %1$.1f ms</string>
+    <string name="diag_audio_xruns">Falhas de Áudio (XRuns): %1$d</string>
+    <string name="diag_surface_dims">Resolução do Ecrã: %1$d x %2$d</string>
+</resources>

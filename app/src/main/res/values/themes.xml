@@ -1,0 +1,6 @@
+<resources>
+    <style name="Theme.AppCompat.NoActionBar" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:keepScreenOn">true</item>
+    </style>
+</resources>

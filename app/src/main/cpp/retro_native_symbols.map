@@ -1,0 +1,8 @@
+{
+    global:
+        Java_com_retro_gamestation_*;
+        JNI_OnLoad;
+        JNI_OnUnload;
+    local:
+        *;
+};

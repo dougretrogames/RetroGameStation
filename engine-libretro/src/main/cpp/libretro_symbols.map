@@ -1,0 +1,9 @@
+{
+    global:
+        Java_org_retrostation_engine_libretro_*;
+        Java_org_retrogamestation_engine_libretro_*;
+        JNI_OnLoad;
+        JNI_OnUnload;
+    local:
+        *;
+};

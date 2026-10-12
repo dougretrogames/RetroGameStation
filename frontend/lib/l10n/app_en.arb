@@ -1,0 +1,320 @@
+{
+  "@@locale": "en",
+  "appName": "Retro Game Station",
+  "commonOk": "OK",
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonApply": "Apply",
+  "commonClose": "Close",
+  "commonBack": "Back",
+  "commonResetDefault": "Reset to Default",
+  "commonSearch": "Search games…",
+  "commonFilter": "Filter",
+  "commonSort": "Sort",
+  "commonEnabled": "Enabled",
+  "commonDisabled": "Disabled",
+  "commonNone": "None",
+  "commonAuto": "Auto",
+  "commonStatusReady": "Ready",
+  "commonStatusError": "Error",
+
+  "navGames": "Games Library",
+  "navFavorites": "Favorites",
+  "navRecent": "Recently Played",
+  "navSettings": "Settings",
+  "navDiagnostics": "Diagnostics",
+
+  "systemArcade": "Arcade / FBNeo",
+  "systemNes": "Nintendo Entertainment System",
+  "systemSnes": "Super Nintendo (SNES)",
+  "systemN64": "Nintendo 64",
+  "systemGb": "Game Boy",
+  "systemGbc": "Game Boy Color",
+  "systemGba": "Game Boy Advance",
+  "systemNds": "Nintendo DS",
+  "systemSms": "Sega Master System",
+  "systemGenesis": "Sega Genesis / Mega Drive",
+  "systemSaturn": "Sega Saturn",
+  "systemDreamcast": "Sega Dreamcast",
+  "systemPsx": "Sony PlayStation (PS1)",
+  "systemPsp": "Sony PlayStation Portable (PSP)",
+
+  "categoryVideoSettings": "Video & Display Settings",
+  "settingGraphicsApi": "Graphics Backend",
+  "settingGraphicsApiDesc": "Select rendering backend (Vulkan recommended for low latency)",
+  "graphicsApiVulkan": "Vulkan (Modern, Low Overhead)",
+  "graphicsApiGles": "OpenGL ES (High Compatibility)",
+  "settingInternalResolution": "Internal Resolution",
+  "settingInternalResolutionDesc": "Multiply 3D rendering resolution for crisp geometry",
+  "resNative": "1x Native (Original Resolution)",
+  "res720p": "2x 720p HD",
+  "res1080p": "3x 1080p Full HD",
+  "res1440p": "4x 1440p 2K",
+  "res4k": "5x 2160p 4K UHD",
+  "settingAspectRatio": "Aspect Ratio",
+  "settingAspectRatioDesc": "Control display geometry scaling and letterboxing",
+  "aspectCoreProvided": "Core Provided (Original)",
+  "aspect43": "4:3 Standard CRT",
+  "aspect169": "16:9 Widescreen",
+  "aspect11": "1:1 Square Pixel",
+  "aspectFullscreen": "Stretch to Screen",
+  "settingIntegerScaling": "Integer Scaling",
+  "settingIntegerScalingDesc": "Scale pixels by integer multipliers for sharp pixel art",
+  "settingVsync": "Vertical Sync (V-Sync)",
+  "settingVsyncDesc": "Synchronize frame swaps with display to eliminate screen tearing",
+  "settingRefreshRate": "Display Refresh Rate",
+  "settingRefreshRateDesc": "Match device display mode (60Hz / 120Hz)",
+  "settingShaderPreset": "Video Shader / Filter",
+  "settingShaderPresetDesc": "Apply real-time post-processing shaders",
+  "shaderNone": "None (Raw Pixels)",
+  "shaderCrtGeom": "CRT-Geom (Curved Arcade Monitor)",
+  "shaderCrtRoyale": "CRT-Royale (Photorealistic Trinitron)",
+  "shaderScanlines": "Clean Scanlines",
+  "shaderXbrz": "xBRZ 4x (Smart Vector Upscaling)",
+  "shaderSharpBilinear": "Sharp Bilinear (Non-blurry scaling)",
+  "shaderLcd3x": "LCD 3x (Handheld Grid)",
+  "settingFrameSkip": "Frame Skipping",
+  "settingFrameSkipDesc": "Skip rendering frames on low-end hardware",
+  "settingBfi": "Black Frame Insertion (BFI)",
+  "settingBfiDesc": "Insert black frames on 120Hz displays to reduce motion blur",
+
+  "categoryAudioSettings": "Audio Settings",
+  "settingAudioEngine": "Audio Engine",
+  "settingAudioEngineDesc": "Real-time low-latency audio driver",
+  "audioEngineAaudio": "AAudio (Ultra-Low Latency)",
+  "audioEngineOpensles": "OpenSL ES (Legacy Fallback)",
+  "settingAudioLatencyMode": "Latency Buffer Profile",
+  "settingAudioLatencyModeDesc": "Buffer burst sizing policy",
+  "latencyUltraLow": "Ultra-Low (2 Bursts ~10-15ms)",
+  "latencyLow": "Low (3 Bursts ~20-25ms)",
+  "latencySafe": "Safe (4 Bursts ~35ms, Prevents Crackles)",
+  "settingAudioExclusive": "AAudio Exclusive Stream",
+  "settingAudioExclusiveDesc": "Bypass system audio mixer for minimum latency",
+  "settingDynamicRateControl": "Dynamic Rate Control (DRC)",
+  "settingDynamicRateControlDesc": "Dynamically micro-adjust audio pitch to avoid buffer underruns",
+  "settingAudioResampler": "Resampler Quality",
+  "settingAudioResamplerDesc": "Interpolation filter algorithm for sample rate conversion",
+  "resamplerSinc": "Sinc (Highest Fidelity)",
+  "resamplerHermite": "Hermite (Balanced)",
+  "resamplerNearest": "Nearest Neighbor (Fastest)",
+  "settingMuteOnFastForward": "Mute on Fast-Forward",
+  "settingMuteOnFastForwardDesc": "Silence audio playback when fast forwarding",
+  "settingVolumeGain": "Master Audio Gain",
+  "settingVolumeGainDesc": "Preamp volume multiplier (100% is normal)",
+
+  "categoryControllerSettings": "Controller & Input Calibration",
+  "settingDetectedGamepads": "Detected Gamepads",
+  "settingPlayerAssignment": "Player Port Assignment",
+  "settingAnalogDeadzone": "Analog Stick Deadzone",
+  "settingAnalogDeadzoneDesc": "Inner threshold to eliminate stick drift",
+  "settingTriggerThreshold": "Analog Trigger Sensitivity",
+  "settingTriggerThresholdDesc": "Activation threshold for L2/R2 analog triggers",
+  "settingRumble": "Haptic Feedback / Rumble",
+  "settingRumbleDesc": "Controller motor vibration intensity",
+  "rumbleOff": "Off",
+  "rumbleLight": "Light",
+  "rumbleMedium": "Medium",
+  "rumbleStrong": "Strong",
+  "settingRemapButtons": "Button Remapping",
+  "settingRemapButtonsDesc": "Customize physical button bindings",
+  "settingTouchControls": "On-Screen Touch Controls",
+  "settingTouchControlsDesc": "Toggle virtual overlay buttons on touchscreens",
+  "settingTouchOpacity": "Touch Controls Opacity",
+  "settingTouchHaptics": "Haptic Vibration on Touch",
+
+  "categoryHotkeySettings": "Global Hotkeys Configuration",
+  "hotkeyInfoDesc": "Standardized combos intercepted before reaching emulation loops.",
+  "settingHotkeyModifier": "Hotkey Modifier Button",
+  "settingHotkeyModifierDesc": "Primary button held down to trigger secondary hotkeys",
+  "btnSelect": "SELECT Button",
+  "btnGuide": "GUIDE / Home / Xbox Button",
+  "btnL3": "L3 (Left Stick Click)",
+  "btnR3": "R3 (Right Stick Click)",
+  "settingHotkeyQuickMenu": "In-Game Quick Menu",
+  "comboHotkeyQuickMenu": "Hotkey + X (North Button)",
+  "settingHotkeySaveState": "Save State",
+  "comboHotkeySaveState": "Hotkey + R1",
+  "settingHotkeyLoadState": "Load State",
+  "comboHotkeyLoadState": "Hotkey + L1",
+  "settingHotkeyFastForward": "Fast Forward Toggle",
+  "comboHotkeyFastForward": "Hotkey + R2",
+  "settingHotkeyRewind": "Rewind Toggle",
+  "comboHotkeyRewind": "Hotkey + L2",
+  "settingHotkeyQuit": "Quit to Launcher",
+  "comboHotkeyQuit": "Hotkey + START",
+  "settingHotkeySlotUp": "Next Save Slot",
+  "comboHotkeySlotUp": "Hotkey + D-Pad UP",
+  "settingHotkeySlotDown": "Previous Save Slot",
+  "comboHotkeySlotDown": "Hotkey + D-Pad DOWN",
+  "settingHotkeyShaderNext": "Next Shader",
+  "comboHotkeyShaderNext": "Hotkey + D-Pad RIGHT",
+  "settingHotkeyShaderPrev": "Previous Shader",
+  "comboHotkeyShaderPrev": "Hotkey + D-Pad LEFT",
+  "settingHotkeyPause": "Pause / Resume Emulation",
+  "comboHotkeyPause": "Hotkey + Y",
+  "settingHotkeyReset": "Reset Game",
+  "comboHotkeyReset": "Hotkey + B",
+  "settingHotkeyScreenshot": "Take Screenshot",
+  "comboHotkeyScreenshot": "Hotkey + R3",
+
+  "categoryStorageSettings": "Storage Access & Directories",
+  "storageSafBannerTitle": "Scoped Storage Compliant (API 30+)",
+  "storageSafBannerDesc": "Direct zero-copy file descriptors utilized for optimal performance.",
+  "settingRomDirectory": "ROMs Storage Directory",
+  "settingRomDirectoryDesc": "Select root games folder via Storage Access Framework",
+  "settingSavesDirectory": "Battery Saves Directory",
+  "pathSavesDefault": "/files/saves/{system}/ (App-Isolated)",
+  "settingStatesDirectory": "Save States Directory",
+  "pathStatesDefault": "/files/states/{system}/ (App-Isolated)",
+  "settingShadersDirectory": "Shaders Directory",
+  "pathShadersDefault": "/files/shaders/",
+  "settingBiosDirectory": "System BIOS Directory",
+  "pathBiosDefault": "/files/bios/",
+  "btnSelectFolder": "Select Folder",
+  "btnExportSaves": "Export Saves to External Storage",
+  "btnImportSaves": "Import Saves from Storage",
+  "dialogBiosCheckTitle": "BIOS Integrity Check",
+  "dialogBiosMissingWarning": "Warning: Missing BIOS files may cause emulation crashes.",
+  "statusBiosValid": "Valid (Checksum Matches)",
+  "statusBiosInvalid": "Mismatch (Incorrect File)",
+  "statusBiosMissing": "Missing File",
+
+  "categoryScrapingSettings": "Game Scraping & Artwork",
+  "settingScraperSource": "Scraper Metadata Source",
+  "scraperScreenscraper": "ScreenScraper.fr",
+  "scraperThegamesdb": "TheGamesDB.net",
+  "scraperArcadedb": "ArcadeDB",
+  "settingScraperAccount": "Scraper Account Login",
+  "settingScrapeMediaTypes": "Media Types to Download",
+  "mediaBoxart": "2D/3D Box Art",
+  "mediaMarquees": "Arcade Marquees",
+  "mediaScreenshots": "Gameplay Snapshots",
+  "mediaSynopsis": "Game Synopses & Ratings",
+  "settingScrapeLanguage": "Preferred Metadata Language",
+  "settingScrapeMissingOnly": "Only Scrape Missing Media",
+  "btnStartScraping": "Start Scraping Library",
+  "btnStopScraping": "Cancel Scraping",
+  "scrapingProgress": "Scraping {current} of {total} games ({title})…",
+  "@scrapingProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"},
+      "title": {"type": "String"}
+    }
+  },
+  "scrapingComplete": "Library scraping completed successfully.",
+
+  "categoryCloudSync": "Cloud Saves & Cross-Device Sync",
+  "settingCloudProvider": "Cloud Storage Provider",
+  "providerNextcloud": "Nextcloud / ownCloud",
+  "providerWebdav": "Generic WebDAV Server",
+  "providerGdrive": "Google Drive",
+  "providerDropbox": "Dropbox",
+  "settingCloudServerUrl": "Server URL",
+  "settingCloudCredentials": "Credentials & Access Token",
+  "settingAutoSyncExit": "Auto-Sync on Game Exit",
+  "settingAutoSyncExitDesc": "Automatically upload newest save files upon closing game",
+  "settingSyncStates": "Include Save States in Cloud Sync",
+  "settingSyncStatesDesc": "Warning: Save states can be large and take longer to upload",
+  "settingConflictResolution": "Sync Conflict Policy",
+  "conflictKeepNewest": "Keep Newest Timestamp (Recommended)",
+  "conflictAsk": "Always Prompt Me",
+  "conflictLocal": "Always Prefer Local File",
+  "conflictRemote": "Always Prefer Remote File",
+  "btnForceSync": "Synchronize Now",
+  "cloudStatusSynced": "Synchronized",
+  "cloudStatusSyncing": "Synchronizing saves…",
+  "cloudStatusOffline": "Offline (Will sync when connected)",
+  "cloudStatusConflict": "Conflict detected",
+
+  "quickMenuTitle": "In-Game Quick Menu",
+  "quickMenuResume": "Resume Emulation",
+  "quickMenuSaveState": "Save State (Slot {slot})",
+  "@quickMenuSaveState": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "quickMenuLoadState": "Load State (Slot {slot})",
+  "@quickMenuLoadState": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "quickMenuChangeSlot": "Select Active Slot (Current: {slot})",
+  "@quickMenuChangeSlot": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "quickMenuFastForward": "Fast Forward [{status}]",
+  "@quickMenuFastForward": {
+    "placeholders": {
+      "status": {"type": "String"}
+    }
+  },
+  "quickMenuTakeScreenshot": "Take Screenshot",
+  "quickMenuResetGame": "Reset Game",
+  "quickMenuCoreOptions": "Core Specific Options",
+  "quickMenuShaders": "Video Shaders",
+  "quickMenuControls": "Remap Controls",
+  "quickMenuCheats": "Cheats & GameShark",
+  "quickMenuQuitLauncher": "Quit to Launcher",
+  "titleSelectSlot": "Choose Save State Slot",
+
+  "msgStateSaved": "State saved to Slot {slot}",
+  "@msgStateSaved": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "msgStateLoaded": "State loaded from Slot {slot}",
+  "@msgStateLoaded": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "msgSlotSelected": "Active State Slot changed to {slot}",
+  "@msgSlotSelected": {
+    "placeholders": {
+      "slot": {"type": "int"}
+    }
+  },
+  "msgFastForwardOn": "Fast Forward: ON",
+  "msgFastForwardOff": "Fast Forward: OFF",
+  "msgRewindOn": "Rewind: ON",
+  "msgRewindOff": "Rewind: OFF",
+  "msgEmulationPaused": "Emulation Paused",
+  "msgEmulationResumed": "Emulation Resumed",
+  "msgEmulationReset": "Game Reset",
+  "msgScreenshotSaved": "Screenshot captured",
+  "msgNextShader": "Shader changed",
+  "msgPrevShader": "Previous shader restored",
+
+  "diagTitle": "Diagnostics & Real-time Telemetry",
+  "diagFps": "Render FPS: {fps}",
+  "@diagFps": {
+    "placeholders": {
+      "fps": {"type": "double"}
+    }
+  },
+  "diagAudioLatency": "Audio Latency: {latency} ms",
+  "@diagAudioLatency": {
+    "placeholders": {
+      "latency": {"type": "double"}
+    }
+  },
+  "diagAudioXruns": "Audio Underruns (XRuns): {xruns}",
+  "@diagAudioXruns": {
+    "placeholders": {
+      "xruns": {"type": "int"}
+    }
+  },
+  "diagSurfaceDims": "Surface Resolution: {width} x {height}",
+  "@diagSurfaceDims": {
+    "placeholders": {
+      "width": {"type": "int"},
+      "height": {"type": "int"}
+    }
+  }
+}
