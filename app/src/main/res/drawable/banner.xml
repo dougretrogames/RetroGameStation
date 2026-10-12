@@ -1,0 +1,68 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+
+    <!-- 16:9 Arcade Banner Background -->
+    <path android:pathData="M0,0h320v180h-320z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:angle="0"
+                android:endColor="#0B091A"
+                android:startColor="#2A0845"
+                android:type="linear" />
+        </aapt:attr>
+    </path>
+
+    <!-- Neon Horizon Grid -->
+    <path
+        android:strokeColor="#2500F5D4"
+        android:strokeWidth="1"
+        android:pathData="M0,130h320 M0,145h320 M0,160h320 M0,172h320 M40,120l-40,60 M100,120l-40,60 M160,120l0,60 M220,120l40,60 M280,120l40,60" />
+
+    <!-- Gamepad Silhouette on Left -->
+    <path
+        android:fillColor="#1E1435"
+        android:strokeColor="#7928CA"
+        android:strokeWidth="2.5"
+        android:pathData="M50,55 h60 c12,0 22,9 22,22 v6 c0,16 -12,28 -22,28 c-6,0 -10,-3 -14,-7 l-6,-6 l-6,6 c-4,4 -8,7 -14,7 c-10,0 -22,-12 -22,-28 v-6 c0,-13 10,-22 22,-22 Z" />
+
+    <!-- D-Pad Cyan -->
+    <path
+        android:fillColor="#00F5D4"
+        android:pathData="M44,76 h16 v8 h-16 Z M48,72 h8 v16 h-8 Z" />
+
+    <!-- Action Buttons Magenta/Amber -->
+    <path
+        android:fillColor="#00F5D4"
+        android:pathData="M110,70 a3.5,3.5 0 1,0 0.001,0 Z" />
+    <path
+        android:fillColor="#F72585"
+        android:pathData="M110,88 a3.5,3.5 0 1,0 0.001,0 Z" />
+    <path
+        android:fillColor="#7209B7"
+        android:pathData="M101,79 a3.5,3.5 0 1,0 0.001,0 Z" />
+    <path
+        android:fillColor="#FFB703"
+        android:pathData="M119,79 a3.5,3.5 0 1,0 0.001,0 Z" />
+
+    <!-- Center Display on Gamepad -->
+    <path
+        android:fillColor="#2D1152"
+        android:strokeColor="#FF007A"
+        android:strokeWidth="1.2"
+        android:pathData="M72,74 h16 v11 h-16 Z" />
+    <path
+        android:strokeColor="#00F5D4"
+        android:strokeWidth="1"
+        android:pathData="M75,79 h10" />
+
+    <!-- Glowing Accent Line -->
+    <path
+        android:strokeColor="#00F5D4"
+        android:strokeWidth="3"
+        android:pathData="M155,90 h140" />
+
+</vector>

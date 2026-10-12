@@ -20,7 +20,7 @@ add_library(retrostation_libretro SHARED
     src/main/cpp/libretro_bridge.cpp
 )
 
-# Strict symbol isolation and collision prevention linker flags
+# Strict symbol isolation and collision prevention linker flags with 16KB page alignment
 set(VERSION_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/src/main/cpp/libretro_symbols.map")
 
 target_link_options(retrostation_libretro PRIVATE
@@ -29,6 +29,7 @@ target_link_options(retrostation_libretro PRIVATE
     "-Wl,-Bsymbolic"
     "-Wl,--gc-sections"
     "-Wl,--no-undefined"
+    "-Wl,-z,max-page-size=16384"
 )
 
 target_compile_definitions(retrostation_libretro PRIVATE

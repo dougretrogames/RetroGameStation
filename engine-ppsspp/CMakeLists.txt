@@ -29,6 +29,7 @@ target_link_options(retrostation_ppsspp PRIVATE
     "-Wl,-Bsymbolic"
     "-Wl,--gc-sections"
     "-Wl,--no-undefined"
+    "-Wl,-z,max-page-size=16384"
 )
 
 target_compile_definitions(retrostation_ppsspp PRIVATE

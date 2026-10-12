@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Gamepad Chassis -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,36 h44 c8,0 16,6 16,16 v4 c0,12 -8,20 -16,20 c-4,0 -7,-2 -10,-5 l-4,-4 l-4,4 c-3,3 -6,5 -10,5 c-8,0 -16,-8 -16,-20 v-4 c0,-10 8,-16 16,-16 Z" />
+    <!-- Cutout Details -->
+    <!-- D-Pad cutout -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M28,51 h10 v6 h-10 Z M30,49 h6 v10 h-6 Z" />
+    <!-- Action buttons cutout -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M75,47 a2.5,2.5 0 1,0 0.001,0 Z M75,59 a2.5,2.5 0 1,0 0.001,0 Z M69,53 a2.5,2.5 0 1,0 0.001,0 Z M81,53 a2.5,2.5 0 1,0 0.001,0 Z" />
+    <!-- Screen cutout -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M49,51 h10 v6 h-10 Z" />
+</vector>

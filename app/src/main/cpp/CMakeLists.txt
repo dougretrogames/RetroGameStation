@@ -31,6 +31,7 @@ target_link_options(retro_native PRIVATE
     "-Wl,-Bsymbolic"
     "-Wl,--gc-sections"
     "-Wl,--no-undefined"
+    "-Wl,-z,max-page-size=16384"
 )
 
 find_library(log-lib log)
