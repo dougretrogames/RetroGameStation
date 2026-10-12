@@ -36,11 +36,10 @@ target_link_options(retro_native PRIVATE
 
 find_library(log-lib log)
 find_library(android-lib android)
-find_library(aaudio-lib aaudio)
 
 target_link_libraries(
     retro_native
     ${log-lib}
     ${android-lib}
-    ${aaudio-lib}
+    ${CMAKE_DL_LIBS}
 )

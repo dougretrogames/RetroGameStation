@@ -4,7 +4,7 @@ kotlin = "2.0.0"
 ndk = "26.3.11579264"
 cmake = "3.22.1"
 compileSdk = "35"
-minSdk = "26"
+minSdk = "24"
 targetSdk = "35"
 
 coreKtx = "1.13.1"

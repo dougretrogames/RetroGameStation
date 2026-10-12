@@ -1,5 +1,7 @@
 /**
  * Retro Game Station - Low Latency AAudio Stream Manager Implementation
+ * Dynamically loads libaaudio.so at runtime to ensure full binary compatibility
+ * with Android API 24+ (Android 7.0 Nougat) while providing peak low-latency audio on API 26+.
  */
 
 #include "retro_aaudio_stream.h"
@@ -8,6 +10,7 @@
 #include <thread>
 #include <vector>
 #include <cmath>
+#include <cstring>
 
 #define LOG_TAG "RetroAAudio"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
@@ -16,6 +19,87 @@
 
 namespace retro {
 namespace audio {
+
+namespace {
+
+struct AAudioDispatch {
+    void* handle = nullptr;
+
+    aaudio_result_t (*createStreamBuilder)(AAudioStreamBuilder**) = nullptr;
+    const char* (*convertResultToText)(aaudio_result_t) = nullptr;
+    void (*builder_setDirection)(AAudioStreamBuilder*, aaudio_direction_t) = nullptr;
+    void (*builder_setPerformanceMode)(AAudioStreamBuilder*, aaudio_performance_mode_t) = nullptr;
+    void (*builder_setSharingMode)(AAudioStreamBuilder*, aaudio_sharing_mode_t) = nullptr;
+    void (*builder_setFormat)(AAudioStreamBuilder*, aaudio_format_t) = nullptr;
+    void (*builder_setChannelCount)(AAudioStreamBuilder*, int32_t) = nullptr;
+    void (*builder_setSampleRate)(AAudioStreamBuilder*, int32_t) = nullptr;
+    void (*builder_setUsage)(AAudioStreamBuilder*, aaudio_usage_t) = nullptr;
+    void (*builder_setContentType)(AAudioStreamBuilder*, aaudio_content_type_t) = nullptr;
+    void (*builder_setDataCallback)(AAudioStreamBuilder*, AAudioStream_dataCallback, void*) = nullptr;
+    void (*builder_setErrorCallback)(AAudioStreamBuilder*, AAudioStream_errorCallback, void*) = nullptr;
+    aaudio_result_t (*builder_openStream)(AAudioStreamBuilder*, AAudioStream**) = nullptr;
+    aaudio_result_t (*builder_delete)(AAudioStreamBuilder*) = nullptr;
+
+    int32_t (*stream_getSampleRate)(AAudioStream*) = nullptr;
+    int32_t (*stream_getFramesPerBurst)(AAudioStream*) = nullptr;
+    int32_t (*stream_setBufferSizeInFrames)(AAudioStream*, int32_t) = nullptr;
+    aaudio_sharing_mode_t (*stream_getSharingMode)(AAudioStream*) = nullptr;
+    aaudio_stream_state_t (*stream_getState)(AAudioStream*) = nullptr;
+    aaudio_result_t (*stream_requestStart)(AAudioStream*) = nullptr;
+    aaudio_result_t (*stream_requestPause)(AAudioStream*) = nullptr;
+    aaudio_result_t (*stream_requestFlush)(AAudioStream*) = nullptr;
+    aaudio_result_t (*stream_requestStop)(AAudioStream*) = nullptr;
+    aaudio_result_t (*stream_close)(AAudioStream*) = nullptr;
+    int32_t (*stream_getXRunCount)(AAudioStream*) = nullptr;
+    int32_t (*stream_getBufferSizeInFrames)(AAudioStream*) = nullptr;
+
+    bool load() {
+        if (handle) return true;
+        handle = dlopen("libaaudio.so", RTLD_NOW);
+        if (!handle) {
+            return false;
+        }
+
+        #define LOAD_AAUDIO_SYM(target, name) \
+            target = reinterpret_cast<decltype(target)>(dlsym(handle, name));
+
+        LOAD_AAUDIO_SYM(createStreamBuilder, "AAudio_createStreamBuilder");
+        LOAD_AAUDIO_SYM(convertResultToText, "AAudio_convertResultToText");
+        LOAD_AAUDIO_SYM(builder_setDirection, "AAudioStreamBuilder_setDirection");
+        LOAD_AAUDIO_SYM(builder_setPerformanceMode, "AAudioStreamBuilder_setPerformanceMode");
+        LOAD_AAUDIO_SYM(builder_setSharingMode, "AAudioStreamBuilder_setSharingMode");
+        LOAD_AAUDIO_SYM(builder_setFormat, "AAudioStreamBuilder_setFormat");
+        LOAD_AAUDIO_SYM(builder_setChannelCount, "AAudioStreamBuilder_setChannelCount");
+        LOAD_AAUDIO_SYM(builder_setSampleRate, "AAudioStreamBuilder_setSampleRate");
+        LOAD_AAUDIO_SYM(builder_setUsage, "AAudioStreamBuilder_setUsage");
+        LOAD_AAUDIO_SYM(builder_setContentType, "AAudioStreamBuilder_setContentType");
+        LOAD_AAUDIO_SYM(builder_setDataCallback, "AAudioStreamBuilder_setDataCallback");
+        LOAD_AAUDIO_SYM(builder_setErrorCallback, "AAudioStreamBuilder_setErrorCallback");
+        LOAD_AAUDIO_SYM(builder_openStream, "AAudioStreamBuilder_openStream");
+        LOAD_AAUDIO_SYM(builder_delete, "AAudioStreamBuilder_delete");
+
+        LOAD_AAUDIO_SYM(stream_getSampleRate, "AAudioStream_getSampleRate");
+        LOAD_AAUDIO_SYM(stream_getFramesPerBurst, "AAudioStream_getFramesPerBurst");
+        LOAD_AAUDIO_SYM(stream_setBufferSizeInFrames, "AAudioStream_setBufferSizeInFrames");
+        LOAD_AAUDIO_SYM(stream_getSharingMode, "AAudioStream_getSharingMode");
+        LOAD_AAUDIO_SYM(stream_getState, "AAudioStream_getState");
+        LOAD_AAUDIO_SYM(stream_requestStart, "AAudioStream_requestStart");
+        LOAD_AAUDIO_SYM(stream_requestPause, "AAudioStream_requestPause");
+        LOAD_AAUDIO_SYM(stream_requestFlush, "AAudioStream_requestFlush");
+        LOAD_AAUDIO_SYM(stream_requestStop, "AAudioStream_requestStop");
+        LOAD_AAUDIO_SYM(stream_close, "AAudioStream_close");
+        LOAD_AAUDIO_SYM(stream_getXRunCount, "AAudioStream_getXRunCount");
+        LOAD_AAUDIO_SYM(stream_getBufferSizeInFrames, "AAudioStream_getBufferSizeInFrames");
+
+        #undef LOAD_AAUDIO_SYM
+
+        return (createStreamBuilder && builder_openStream && stream_requestStart && stream_close);
+    }
+};
+
+static AAudioDispatch g_aaudio;
+
+} // anonymous namespace
 
 // Static C-style callback trampolines
 static aaudio_data_callback_result_t dataCallbackTrampoline(
@@ -55,69 +139,73 @@ bool AAudioStreamManager::init(const AudioStreamConfig& config) {
 }
 
 bool AAudioStreamManager::openStream() {
-    AAudioStreamBuilder* builder = nullptr;
-    aaudio_result_t result = AAudio_createStreamBuilder(&builder);
-    if (result != AAUDIO_OK) {
-        LOGE("Failed to create AAudio stream builder: %s", AAudio_convertResultToText(result));
+    if (!g_aaudio.load()) {
+        LOGW("libaaudio.so is not available on this platform (requires Android 8.0+ / API 26+). Audio will be disabled gracefully.");
         mState.store(AudioBackendState::ERROR_STATE);
         return false;
     }
 
-    AAudioStreamBuilder_setDirection(builder, AAUDIO_DIRECTION_OUTPUT);
-    AAudioStreamBuilder_setPerformanceMode(builder, AAUDIO_PERFORMANCE_MODE_LOW_LATENCY);
+    AAudioStreamBuilder* builder = nullptr;
+    aaudio_result_t result = g_aaudio.createStreamBuilder(&builder);
+    if (result != AAUDIO_OK || !builder) {
+        const char* errText = g_aaudio.convertResultToText ? g_aaudio.convertResultToText(result) : "Unknown Error";
+        LOGE("Failed to create AAudio stream builder: %s", errText);
+        mState.store(AudioBackendState::ERROR_STATE);
+        return false;
+    }
+
+    g_aaudio.builder_setDirection(builder, AAUDIO_DIRECTION_OUTPUT);
+    g_aaudio.builder_setPerformanceMode(builder, AAUDIO_PERFORMANCE_MODE_LOW_LATENCY);
     
     // Attempt exclusive mode first for rock-bottom latency, fallback to shared
     if (mConfig.exclusiveModeRequested) {
-        AAudioStreamBuilder_setSharingMode(builder, AAUDIO_SHARING_MODE_EXCLUSIVE);
+        g_aaudio.builder_setSharingMode(builder, AAUDIO_SHARING_MODE_EXCLUSIVE);
     } else {
-        AAudioStreamBuilder_setSharingMode(builder, AAUDIO_SHARING_MODE_SHARED);
+        g_aaudio.builder_setSharingMode(builder, AAUDIO_SHARING_MODE_SHARED);
     }
 
-    AAudioStreamBuilder_setFormat(builder, AAUDIO_FORMAT_PCM_FLOAT);
-    AAudioStreamBuilder_setChannelCount(builder, mConfig.channelCount);
-    AAudioStreamBuilder_setSampleRate(builder, mConfig.sampleRate);
+    g_aaudio.builder_setFormat(builder, AAUDIO_FORMAT_PCM_FLOAT);
+    g_aaudio.builder_setChannelCount(builder, mConfig.channelCount);
+    g_aaudio.builder_setSampleRate(builder, mConfig.sampleRate);
     
-    // Dynamic lookup for API 28+ AAudio attributes to maintain API 26 compatibility
-    typedef void (*FnSetUsage)(AAudioStreamBuilder*, aaudio_usage_t);
-    typedef void (*FnSetContentType)(AAudioStreamBuilder*, aaudio_content_type_t);
-    static auto fnSetUsage = reinterpret_cast<FnSetUsage>(dlsym(RTLD_DEFAULT, "AAudioStreamBuilder_setUsage"));
-    static auto fnSetContentType = reinterpret_cast<FnSetContentType>(dlsym(RTLD_DEFAULT, "AAudioStreamBuilder_setContentType"));
-    if (fnSetUsage) {
-        fnSetUsage(builder, AAUDIO_USAGE_GAME);
+    if (g_aaudio.builder_setUsage) {
+        g_aaudio.builder_setUsage(builder, AAUDIO_USAGE_GAME);
     }
-    if (fnSetContentType) {
-        fnSetContentType(builder, AAUDIO_CONTENT_TYPE_MUSIC);
+    if (g_aaudio.builder_setContentType) {
+        g_aaudio.builder_setContentType(builder, AAUDIO_CONTENT_TYPE_MUSIC);
     }
 
-    AAudioStreamBuilder_setDataCallback(builder, dataCallbackTrampoline, this);
-    AAudioStreamBuilder_setErrorCallback(builder, errorCallbackTrampoline, this);
+    g_aaudio.builder_setDataCallback(builder, dataCallbackTrampoline, this);
+    g_aaudio.builder_setErrorCallback(builder, errorCallbackTrampoline, this);
 
-    result = AAudioStreamBuilder_openStream(builder, &mStream);
+    result = g_aaudio.builder_openStream(builder, &mStream);
     if (result != AAUDIO_OK && mConfig.exclusiveModeRequested) {
-        LOGW("Exclusive sharing mode failed (%s). Retrying with SHARED mode...", AAudio_convertResultToText(result));
-        AAudioStreamBuilder_setSharingMode(builder, AAUDIO_SHARING_MODE_SHARED);
-        result = AAudioStreamBuilder_openStream(builder, &mStream);
+        const char* errText = g_aaudio.convertResultToText ? g_aaudio.convertResultToText(result) : "Unknown";
+        LOGW("Exclusive sharing mode failed (%s). Retrying with SHARED mode...", errText);
+        g_aaudio.builder_setSharingMode(builder, AAUDIO_SHARING_MODE_SHARED);
+        result = g_aaudio.builder_openStream(builder, &mStream);
     }
 
-    AAudioStreamBuilder_delete(builder);
+    g_aaudio.builder_delete(builder);
 
     if (result != AAUDIO_OK || !mStream) {
-        LOGE("Failed to open AAudio stream: %s", AAudio_convertResultToText(result));
+        const char* errText = g_aaudio.convertResultToText ? g_aaudio.convertResultToText(result) : "Unknown";
+        LOGE("Failed to open AAudio stream: %s", errText);
         mStream = nullptr;
         mState.store(AudioBackendState::ERROR_STATE);
         return false;
     }
 
-    mActualSampleRate = AAudioStream_getSampleRate(mStream);
-    mActualBurstSize = AAudioStream_getFramesPerBurst(mStream);
+    mActualSampleRate = g_aaudio.stream_getSampleRate(mStream);
+    mActualBurstSize = g_aaudio.stream_getFramesPerBurst(mStream);
     
     // Set buffer size to burst * bufferCapacityInBursts for optimal low latency
     int32_t targetBufferFrames = mActualBurstSize * mConfig.bufferCapacityInBursts;
-    mActualBufferSizeInFrames = AAudioStream_setBufferSizeInFrames(mStream, targetBufferFrames);
+    mActualBufferSizeInFrames = g_aaudio.stream_setBufferSizeInFrames(mStream, targetBufferFrames);
 
     LOGI("AAudio stream opened successfully. SampleRate: %d, Burst: %d frames, BufferSize: %d frames, Sharing: %s",
          mActualSampleRate, mActualBurstSize, mActualBufferSizeInFrames,
-         AAudioStream_getSharingMode(mStream) == AAUDIO_SHARING_MODE_EXCLUSIVE ? "EXCLUSIVE" : "SHARED");
+         g_aaudio.stream_getSharingMode(mStream) == AAUDIO_SHARING_MODE_EXCLUSIVE ? "EXCLUSIVE" : "SHARED");
 
     mState.store(AudioBackendState::INITIALIZED);
     return true;
@@ -125,17 +213,18 @@ bool AAudioStreamManager::openStream() {
 
 bool AAudioStreamManager::start() {
     std::lock_guard<std::mutex> lock(mStreamMutex);
-    if (!mStream) return false;
+    if (!mStream || !g_aaudio.stream_getState) return false;
 
-    aaudio_stream_state_t streamState = AAudioStream_getState(mStream);
+    aaudio_stream_state_t streamState = g_aaudio.stream_getState(mStream);
     if (streamState == AAUDIO_STREAM_STATE_STARTED) {
         mState.store(AudioBackendState::RUNNING);
         return true;
     }
 
-    aaudio_result_t result = AAudioStream_requestStart(mStream);
+    aaudio_result_t result = g_aaudio.stream_requestStart(mStream);
     if (result != AAUDIO_OK) {
-        LOGE("Failed to start AAudio stream: %s", AAudio_convertResultToText(result));
+        const char* errText = g_aaudio.convertResultToText ? g_aaudio.convertResultToText(result) : "Unknown";
+        LOGE("Failed to start AAudio stream: %s", errText);
         return false;
     }
 
@@ -146,17 +235,18 @@ bool AAudioStreamManager::start() {
 
 bool AAudioStreamManager::pause() {
     std::lock_guard<std::mutex> lock(mStreamMutex);
-    if (!mStream) return false;
+    if (!mStream || !g_aaudio.stream_getState) return false;
 
-    aaudio_stream_state_t streamState = AAudioStream_getState(mStream);
+    aaudio_stream_state_t streamState = g_aaudio.stream_getState(mStream);
     if (streamState == AAUDIO_STREAM_STATE_PAUSED) {
         mState.store(AudioBackendState::PAUSED);
         return true;
     }
 
-    aaudio_result_t result = AAudioStream_requestPause(mStream);
+    aaudio_result_t result = g_aaudio.stream_requestPause(mStream);
     if (result != AAUDIO_OK) {
-        LOGE("Failed to pause AAudio stream: %s", AAudio_convertResultToText(result));
+        const char* errText = g_aaudio.convertResultToText ? g_aaudio.convertResultToText(result) : "Unknown";
+        LOGE("Failed to pause AAudio stream: %s", errText);
         return false;
     }
 
@@ -170,24 +260,24 @@ bool AAudioStreamManager::flush() {
     if (mRingBuffer) {
         mRingBuffer->reset();
     }
-    if (mStream) {
-        AAudioStream_requestFlush(mStream);
+    if (mStream && g_aaudio.stream_requestFlush) {
+        g_aaudio.stream_requestFlush(mStream);
     }
     return true;
 }
 
 void AAudioStreamManager::stop() {
     std::lock_guard<std::mutex> lock(mStreamMutex);
-    if (mStream) {
-        AAudioStream_requestStop(mStream);
+    if (mStream && g_aaudio.stream_requestStop) {
+        g_aaudio.stream_requestStop(mStream);
         mState.store(AudioBackendState::STOPPED);
         LOGI("AAudio stream stopped");
     }
 }
 
 void AAudioStreamManager::closeStream() {
-    if (mStream) {
-        AAudioStream_close(mStream);
+    if (mStream && g_aaudio.stream_close) {
+        g_aaudio.stream_close(mStream);
         mStream = nullptr;
     }
 }
@@ -251,13 +341,13 @@ void AAudioStreamManager::setFastForwardActive(bool active, bool muteOnFastForwa
 }
 
 int32_t AAudioStreamManager::getXRunCount() const {
-    if (!mStream) return mXRunCount.load();
-    return AAudioStream_getXRunCount(mStream);
+    if (!mStream || !g_aaudio.stream_getXRunCount) return mXRunCount.load();
+    return g_aaudio.stream_getXRunCount(mStream);
 }
 
 double AAudioStreamManager::getCurrentLatencyMillis() const {
-    if (!mStream || mActualSampleRate <= 0) return 0.0;
-    int32_t bufferSize = AAudioStream_getBufferSizeInFrames(mStream);
+    if (!mStream || mActualSampleRate <= 0 || !g_aaudio.stream_getBufferSizeInFrames) return 0.0;
+    int32_t bufferSize = g_aaudio.stream_getBufferSizeInFrames(mStream);
     return (static_cast<double>(bufferSize) / mActualSampleRate) * 1000.0;
 }
 
@@ -292,7 +382,8 @@ aaudio_data_callback_result_t AAudioStreamManager::onAudioData(
 }
 
 void AAudioStreamManager::onAudioError(AAudioStream* stream, aaudio_result_t error) {
-    LOGW("AAudio stream error received: %s (code: %d)", AAudio_convertResultToText(error), error);
+    const char* errText = g_aaudio.convertResultToText ? g_aaudio.convertResultToText(error) : "Unknown";
+    LOGW("AAudio stream error received: %s (code: %d)", errText, error);
 
     if (error == AAUDIO_ERROR_DISCONNECTED) {
         LOGI("Audio device disconnected (headphones or Bluetooth). Initiating stream recovery...");
@@ -320,7 +411,9 @@ void AAudioStreamManager::recoverStream() {
                 closeStream();
                 if (openStream()) {
                     if (mState.load() == AudioBackendState::RUNNING || mState.load() == AudioBackendState::INITIALIZED) {
-                        AAudioStream_requestStart(mStream);
+                        if (g_aaudio.stream_requestStart) {
+                            g_aaudio.stream_requestStart(mStream);
+                        }
                         mState.store(AudioBackendState::RUNNING);
                         LOGI("Stream recovery successfully restored playback");
                     }
