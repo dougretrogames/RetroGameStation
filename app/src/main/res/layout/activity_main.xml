@@ -48,7 +48,7 @@
                     android:id="@+id/tv_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="OneUI 9 / Android 17 Ready • 16KB Page Aligned"
+                    android:text="OneUI 9 / Android 17 Ready • Libretro &amp; Standalones"
                     android:textColor="#00F5D4"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -63,7 +63,7 @@
                 android:paddingTop="6dp"
                 android:paddingEnd="12dp"
                 android:paddingBottom="6dp"
-                android:text="ARM64-v8a • 16KB"
+                android:text="ARM64 • 16KB"
                 android:textColor="#F72585"
                 android:textSize="11sp"
                 android:textStyle="bold" />
@@ -111,6 +111,15 @@
                 android:layout_height="wrap_content"
                 android:text="Gamepad: Verificando periféricos físicos..."
                 android:textColor="#FFB703"
+                android:textSize="13sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tv_cores_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Núcleos Libretro: Carregando..."
+                android:textColor="#00F5D4"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -124,13 +133,25 @@
             android:textColor="#FFFFFF"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="12dp" />
+
+        <!-- Core Downloader Action Button -->
+        <Button
+            android:id="@+id/btn_manage_cores"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:backgroundTint="#00F5D4"
+            android:text="📥  GERENCIADOR &amp; DOWNLOAD DE NÚCLEOS (BUILDBOT)"
+            android:textColor="#0D0A1A"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp" />
 
         <!-- Grid of Emulator Engine Launchers -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MOTORES DE EMULAÇÃO NATIVOS"
+            android:text="MOTORES DE EMULAÇÃO NATIVOS &amp; STANDALONES"
             android:textColor="#A0A0A0"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -212,7 +233,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Retro Game Station • Build 1.0.0 • NDK r26c (16KB Clean)"
+            android:text="Retro Game Station • Build 1.0.0 • Libretro Buildbot Core Downloader"
             android:textColor="#666666"
             android:textSize="11sp"
             android:layout_marginTop="8dp" />

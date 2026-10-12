@@ -12,7 +12,8 @@ data class RomDescriptor(
     val suggestedCore: EmulationCore,
     val sha1Checksum: String = "",
     val saveDirectory: String = "",
-    val stateDirectory: String = ""
+    val stateDirectory: String = "",
+    val coreFilePath: String = ""
 ) {
     val file: File get() = File(filePath)
     val exists: Boolean get() = file.exists()

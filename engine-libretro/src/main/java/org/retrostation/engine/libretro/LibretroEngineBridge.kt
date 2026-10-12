@@ -32,12 +32,19 @@ class LibretroEngineBridge : IGameEngine {
         return success
     }
 
+    fun setDirectories(systemDir: String, saveDir: String) {
+        nativeSetDirectories(systemDir, saveDir)
+    }
+
     override fun setSurface(surface: Surface?): Boolean {
         return nativeSetSurface(surface)
     }
 
     override fun loadRom(rom: RomDescriptor): Boolean {
-        return nativeLoadRom(rom.filePath, "")
+        if (rom.saveDirectory.isNotEmpty()) {
+            nativeSetDirectories(rom.saveDirectory, rom.saveDirectory)
+        }
+        return nativeLoadRom(rom.filePath, rom.coreFilePath)
     }
 
     override fun runFrame() {
@@ -93,6 +100,7 @@ class LibretroEngineBridge : IGameEngine {
 
     // Native JNI Declarations
     private external fun nativeInit(sampleRate: Int): Boolean
+    private external fun nativeSetDirectories(systemDir: String, saveDir: String)
     private external fun nativeSetSurface(surface: Surface?): Boolean
     private external fun nativeLoadRom(romPath: String, corePath: String): Boolean
     private external fun nativeRunFrame()

@@ -1,10 +1,37 @@
 #include "include/libretro_bridge.h"
 #include <cstring>
 #include <algorithm>
+#include <fstream>
+#include <vector>
 
 namespace retrostation::libretro {
 
 static LibretroBridge* s_instance = nullptr;
+
+// Static C callback forwarders for Libretro C API
+static bool cb_environment(unsigned cmd, void* data) {
+    return LibretroBridge::getInstance().handleEnvironment(cmd, data);
+}
+
+static void cb_video_refresh(const void* data, unsigned width, unsigned height, size_t pitch) {
+    LibretroBridge::getInstance().handleVideoRefresh(data, width, height, pitch);
+}
+
+static void cb_audio_sample(int16_t left, int16_t right) {
+    LibretroBridge::getInstance().handleAudioSample(left, right);
+}
+
+static size_t cb_audio_sample_batch(const int16_t* data, size_t frames) {
+    return LibretroBridge::getInstance().handleAudioSampleBatch(data, frames);
+}
+
+static void cb_input_poll() {
+    LibretroBridge::getInstance().handleInputPoll();
+}
+
+static int16_t cb_input_state(unsigned port, unsigned device, unsigned index, unsigned id) {
+    return LibretroBridge::getInstance().handleInputState(port, device, index, id);
+}
 
 LibretroBridge& LibretroBridge::getInstance() {
     static LibretroBridge instance;
@@ -43,6 +70,13 @@ bool LibretroBridge::initialize(JavaVM* vm, jobject bridgeObj, int sampleRate) {
     return true;
 }
 
+void LibretroBridge::setDirectories(const char* systemDir, const char* saveDir) {
+    std::lock_guard<std::mutex> lock(stateMutex_);
+    systemDirectory_ = systemDir != nullptr ? systemDir : "";
+    saveDirectory_ = saveDir != nullptr ? saveDir : "";
+    LOGI("Directories set: system='%s', save='%s'", systemDirectory_.c_str(), saveDirectory_.c_str());
+}
+
 bool LibretroBridge::setSurface(ANativeWindow* window) {
     std::lock_guard<std::mutex> lock(renderMutex_);
     if (nativeWindow_ != nullptr) {
@@ -60,9 +94,140 @@ bool LibretroBridge::setSurface(ANativeWindow* window) {
     return true;
 }
 
-bool LibretroBridge::loadRom(const char* romPath, const char* /*corePath*/) {
+void LibretroBridge::unloadCore() {
+    if (isGameLoaded_ && core_unload_game_ != nullptr) {
+        core_unload_game_();
+        isGameLoaded_ = false;
+        LOGI("Core game unloaded");
+    }
+
+    if (core_deinit_ != nullptr) {
+        core_deinit_();
+        LOGI("Core deinitialized");
+    }
+
+    core_init_ = nullptr;
+    core_deinit_ = nullptr;
+    core_api_version_ = nullptr;
+    core_get_system_info_ = nullptr;
+    core_get_system_av_info_ = nullptr;
+    core_set_environment_ = nullptr;
+    core_set_video_refresh_ = nullptr;
+    core_set_audio_sample_ = nullptr;
+    core_set_audio_sample_batch_ = nullptr;
+    core_set_input_poll_ = nullptr;
+    core_set_input_state_ = nullptr;
+    core_set_controller_port_device_ = nullptr;
+    core_reset_ = nullptr;
+    core_run_ = nullptr;
+    core_serialize_size_ = nullptr;
+    core_serialize_ = nullptr;
+    core_unserialize_ = nullptr;
+    core_load_game_ = nullptr;
+    core_unload_game_ = nullptr;
+
+    if (coreHandle_ != nullptr) {
+        dlclose(coreHandle_);
+        coreHandle_ = nullptr;
+        LOGI("Core dynamic library closed cleanly");
+    }
+    currentCorePath_.clear();
+}
+
+bool LibretroBridge::loadRom(const char* romPath, const char* corePath) {
     std::lock_guard<std::mutex> lock(stateMutex_);
-    LOGI("LibretroBridge loading ROM: %s", romPath);
+    LOGI("LibretroBridge loadRom: rom='%s', core='%s'", romPath ? romPath : "", corePath ? corePath : "");
+
+    if (corePath != nullptr && strlen(corePath) > 0) {
+        if (coreHandle_ == nullptr || currentCorePath_ != corePath) {
+            unloadCore();
+
+            coreHandle_ = dlopen(corePath, RTLD_LAZY | RTLD_LOCAL);
+            if (!coreHandle_) {
+                LOGE("Failed to dlopen core '%s': %s", corePath, dlerror());
+                return false;
+            }
+            currentCorePath_ = corePath;
+            LOGI("Core '%s' opened successfully with dlopen", corePath);
+
+            // Resolve symbols
+            core_init_ = reinterpret_cast<void(*)(void)>(dlsym(coreHandle_, "retro_init"));
+            core_deinit_ = reinterpret_cast<void(*)(void)>(dlsym(coreHandle_, "retro_deinit"));
+            core_api_version_ = reinterpret_cast<unsigned(*)(void)>(dlsym(coreHandle_, "retro_api_version"));
+            core_get_system_info_ = reinterpret_cast<void(*)(struct retro_system_info*)>(dlsym(coreHandle_, "retro_get_system_info"));
+            core_get_system_av_info_ = reinterpret_cast<void(*)(struct retro_system_av_info*)>(dlsym(coreHandle_, "retro_get_system_av_info"));
+            core_set_environment_ = reinterpret_cast<void(*)(retro_environment_t)>(dlsym(coreHandle_, "retro_set_environment"));
+            core_set_video_refresh_ = reinterpret_cast<void(*)(retro_video_refresh_t)>(dlsym(coreHandle_, "retro_set_video_refresh"));
+            core_set_audio_sample_ = reinterpret_cast<void(*)(retro_audio_sample_t)>(dlsym(coreHandle_, "retro_set_audio_sample"));
+            core_set_audio_sample_batch_ = reinterpret_cast<void(*)(retro_audio_sample_batch_t)>(dlsym(coreHandle_, "retro_set_audio_sample_batch"));
+            core_set_input_poll_ = reinterpret_cast<void(*)(retro_input_poll_t)>(dlsym(coreHandle_, "retro_set_input_poll"));
+            core_set_input_state_ = reinterpret_cast<void(*)(retro_input_state_t)>(dlsym(coreHandle_, "retro_set_input_state"));
+            core_set_controller_port_device_ = reinterpret_cast<void(*)(unsigned, unsigned)>(dlsym(coreHandle_, "retro_set_controller_port_device"));
+            core_reset_ = reinterpret_cast<void(*)(void)>(dlsym(coreHandle_, "retro_reset"));
+            core_run_ = reinterpret_cast<void(*)(void)>(dlsym(coreHandle_, "retro_run"));
+            core_serialize_size_ = reinterpret_cast<size_t(*)(void)>(dlsym(coreHandle_, "retro_serialize_size"));
+            core_serialize_ = reinterpret_cast<bool(*)(void*, size_t)>(dlsym(coreHandle_, "retro_serialize"));
+            core_unserialize_ = reinterpret_cast<bool(*)(const void*, size_t)>(dlsym(coreHandle_, "retro_unserialize"));
+            core_load_game_ = reinterpret_cast<bool(*)(const struct retro_game_info*)>(dlsym(coreHandle_, "retro_load_game"));
+            core_unload_game_ = reinterpret_cast<void(*)(void)>(dlsym(coreHandle_, "retro_unload_game"));
+
+            if (!core_init_ || !core_run_ || !core_load_game_ || !core_set_environment_) {
+                LOGE("Core is missing essential Libretro symbols!");
+                unloadCore();
+                return false;
+            }
+
+            // Wire callbacks
+            core_set_environment_(cb_environment);
+            core_set_video_refresh_(cb_video_refresh);
+            if (core_set_audio_sample_) core_set_audio_sample_(cb_audio_sample);
+            if (core_set_audio_sample_batch_) core_set_audio_sample_batch_(cb_audio_sample_batch);
+            core_set_input_poll_(cb_input_poll);
+            core_set_input_state_(cb_input_state);
+
+            core_init_();
+            LOGI("Core initialized via retro_init()");
+        }
+    }
+
+    if (romPath != nullptr && strlen(romPath) > 0 && core_load_game_ != nullptr) {
+        struct retro_game_info gameInfo{};
+        gameInfo.path = romPath;
+
+        // Try to read file to buffer for cores that require in-memory buffers
+        std::ifstream file(romPath, std::ios::binary | std::ios::ate);
+        std::vector<uint8_t> buffer;
+        if (file.is_open()) {
+            std::streamsize size = file.tellg();
+            if (size > 0 && size < (128 * 1024 * 1024)) { // Under 128 MB in memory
+                file.seekg(0, std::ios::beg);
+                buffer.resize(static_cast<size_t>(size));
+                if (file.read(reinterpret_cast<char*>(buffer.data()), size)) {
+                    gameInfo.data = buffer.data();
+                    gameInfo.size = buffer.size();
+                }
+            }
+        }
+
+        bool success = core_load_game_(&gameInfo);
+        if (success) {
+            isGameLoaded_ = true;
+            LOGI("Game loaded successfully by core: %s", romPath);
+
+            if (core_get_system_av_info_) {
+                struct retro_system_av_info avInfo{};
+                core_get_system_av_info_(&avInfo);
+                LOGI("System AV: geometry=%ux%u, aspect=%.2f, fps=%.2f, sample_rate=%.1f",
+                     avInfo.geometry.base_width, avInfo.geometry.base_height,
+                     avInfo.geometry.aspect_ratio, avInfo.timing.fps, avInfo.timing.sample_rate);
+            }
+            return true;
+        } else {
+            LOGE("retro_load_game returned false for ROM: %s", romPath);
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -71,6 +236,12 @@ void LibretroBridge::runFrame() {
         return;
     }
 
+    if (core_run_ != nullptr && isGameLoaded_) {
+        core_run_();
+        return;
+    }
+
+    // Fallback simulation loop when no dynamic core is loaded
     std::lock_guard<std::mutex> lock(renderMutex_);
     if (nativeWindow_ == nullptr) {
         return;
@@ -78,7 +249,6 @@ void LibretroBridge::runFrame() {
 
     ANativeWindow_Buffer buffer;
     if (ANativeWindow_lock(nativeWindow_, &buffer, nullptr) == 0) {
-        // Clear or draw simulated frame
         if (buffer.bits != nullptr) {
             std::memset(buffer.bits, 0x1F, buffer.stride * buffer.height * (buffer.format == WINDOW_FORMAT_RGBA_8888 ? 4 : 2));
         }
@@ -100,11 +270,7 @@ void LibretroBridge::sendInput(int port, int key, bool isDown, float axisValue) 
     if (port < 0 || port > 1) return;
 
     if (key >= 0 && key < 16) {
-        if (isDown) {
-            joypadState_[port][key] = 1;
-        } else {
-            joypadState_[port][key] = 0;
-        }
+        joypadState_[port][key] = isDown ? 1 : 0;
     } else if (key >= 16 && key <= 19) {
         int axisIndex = key - 16;
         analogAxes_[port][axisIndex] = static_cast<int16_t>(axisValue * 32767.0f);
@@ -114,19 +280,39 @@ void LibretroBridge::sendInput(int port, int key, bool isDown, float axisValue) 
 std::vector<uint8_t> LibretroBridge::saveState(int slot) {
     std::lock_guard<std::mutex> lock(stateMutex_);
     LOGI("LibretroBridge saveState for slot %d", slot);
+
+    if (core_serialize_size_ && core_serialize_ && isGameLoaded_) {
+        size_t size = core_serialize_size_();
+        if (size > 0) {
+            std::vector<uint8_t> data(size);
+            if (core_serialize_(data.data(), size)) {
+                return data;
+            }
+        }
+    }
+
     std::vector<uint8_t> stateData(1024, 0xAA);
     return stateData;
 }
 
-bool LibretroBridge::loadState(int slot, const uint8_t* /*data*/, size_t size) {
+bool LibretroBridge::loadState(int slot, const uint8_t* data, size_t size) {
     std::lock_guard<std::mutex> lock(stateMutex_);
     LOGI("LibretroBridge loadState for slot %d with size %zu", slot, size);
+
+    if (core_unserialize_ && isGameLoaded_ && data != nullptr && size > 0) {
+        return core_unserialize_(data, size);
+    }
     return true;
 }
 
 void LibretroBridge::destroy() {
     isRunning_.store(false);
     isPaused_.store(false);
+
+    {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        unloadCore();
+    }
 
     {
         std::lock_guard<std::mutex> lock(renderMutex_);
@@ -156,6 +342,7 @@ bool LibretroBridge::handleEnvironment(unsigned cmd, void* data) {
             const auto* fmt = static_cast<const enum retro_pixel_format*>(data);
             if (fmt != nullptr) {
                 pixelFormat_ = *fmt;
+                LOGI("Libretro pixel format set to: %d", pixelFormat_);
                 return true;
             }
             return false;
@@ -164,6 +351,30 @@ bool LibretroBridge::handleEnvironment(unsigned cmd, void* data) {
             auto* canDupe = static_cast<bool*>(data);
             if (canDupe) *canDupe = true;
             return true;
+        }
+        case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: {
+            auto** dir = static_cast<const char**>(data);
+            if (dir) {
+                *dir = systemDirectory_.empty() ? nullptr : systemDirectory_.c_str();
+                return true;
+            }
+            return false;
+        }
+        case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY: {
+            auto** dir = static_cast<const char**>(data);
+            if (dir) {
+                *dir = saveDirectory_.empty() ? nullptr : saveDirectory_.c_str();
+                return true;
+            }
+            return false;
+        }
+        case RETRO_ENVIRONMENT_SET_GEOMETRY: {
+            const auto* geom = static_cast<const struct retro_game_geometry*>(data);
+            if (geom) {
+                LOGI("Libretro dynamic geometry changed: %ux%u", geom->base_width, geom->base_height);
+                return true;
+            }
+            return false;
         }
         default:
             return false;
@@ -180,13 +391,19 @@ void LibretroBridge::handleVideoRefresh(const void* data, unsigned width, unsign
         auto* dst = static_cast<uint8_t*>(buffer.bits);
         const auto* src = static_cast<const uint8_t*>(data);
         size_t copyLines = std::min(static_cast<size_t>(buffer.height), static_cast<size_t>(height));
-        size_t bytesPerLine = std::min(static_cast<size_t>(buffer.stride * 2), pitch);
+        size_t bytesPerLine = std::min(static_cast<size_t>(buffer.stride * (pixelFormat_ == RETRO_PIXEL_FORMAT_XRGB8888 ? 4 : 2)), pitch);
 
         for (size_t y = 0; y < copyLines; ++y) {
-            std::memcpy(dst + (y * buffer.stride * 2), src + (y * pitch), bytesPerLine);
+            std::memcpy(dst + (y * buffer.stride * (pixelFormat_ == RETRO_PIXEL_FORMAT_XRGB8888 ? 4 : 2)), 
+                        src + (y * pitch), bytesPerLine);
         }
         ANativeWindow_unlockAndPost(nativeWindow_);
     }
+}
+
+void LibretroBridge::handleAudioSample(int16_t left, int16_t right) {
+    int16_t frame[2] = {left, right};
+    handleAudioSampleBatch(frame, 1);
 }
 
 size_t LibretroBridge::handleAudioSampleBatch(const int16_t* data, size_t frames) {
@@ -216,6 +433,10 @@ size_t LibretroBridge::handleAudioSampleBatch(const int16_t* data, size_t frames
     return frames;
 }
 
+void LibretroBridge::handleInputPoll() {
+    // Polled automatically every frame
+}
+
 int16_t LibretroBridge::handleInputState(unsigned port, unsigned device, unsigned index, unsigned id) {
     if (port > 1) return 0;
     if (device == RETRO_DEVICE_JOYPAD && id < 16) {
@@ -233,7 +454,7 @@ int16_t LibretroBridge::handleInputState(unsigned port, unsigned device, unsigne
 
 } // namespace retrostation::libretro
 
-// JNI Entry Points strictly exported by libretro_symbols.map
+// JNI Entry Points
 extern "C" {
 
 static JavaVM* g_vm = nullptr;
@@ -255,6 +476,16 @@ Java_org_retrostation_engine_libretro_LibretroEngineBridge_nativeInit(
     return static_cast<jboolean>(retrostation::libretro::LibretroBridge::getInstance().initialize(g_vm, thiz, sampleRate));
 }
 
+JNIEXPORT void JNICALL
+Java_org_retrostation_engine_libretro_LibretroEngineBridge_nativeSetDirectories(
+        JNIEnv* env, jobject /*thiz*/, jstring systemDir, jstring saveDir) {
+    const char* cSys = systemDir ? env->GetStringUTFChars(systemDir, nullptr) : nullptr;
+    const char* cSave = saveDir ? env->GetStringUTFChars(saveDir, nullptr) : nullptr;
+    retrostation::libretro::LibretroBridge::getInstance().setDirectories(cSys, cSave);
+    if (cSys) env->ReleaseStringUTFChars(systemDir, cSys);
+    if (cSave) env->ReleaseStringUTFChars(saveDir, cSave);
+}
+
 JNIEXPORT jboolean JNICALL
 Java_org_retrostation_engine_libretro_LibretroEngineBridge_nativeSetSurface(
         JNIEnv* env, jobject /*thiz*/, jobject surface) {
@@ -268,15 +499,13 @@ Java_org_retrostation_engine_libretro_LibretroEngineBridge_nativeSetSurface(
 JNIEXPORT jboolean JNICALL
 Java_org_retrostation_engine_libretro_LibretroEngineBridge_nativeLoadRom(
         JNIEnv* env, jobject /*thiz*/, jstring romPath, jstring corePath) {
-    const char* cRomPath = env->GetStringUTFChars(romPath, nullptr);
+    const char* cRomPath = romPath != nullptr ? env->GetStringUTFChars(romPath, nullptr) : "";
     const char* cCorePath = corePath != nullptr ? env->GetStringUTFChars(corePath, nullptr) : "";
 
     bool success = retrostation::libretro::LibretroBridge::getInstance().loadRom(cRomPath, cCorePath);
 
-    env->ReleaseStringUTFChars(romPath, cRomPath);
-    if (corePath != nullptr) {
-        env->ReleaseStringUTFChars(corePath, cCorePath);
-    }
+    if (romPath != nullptr) env->ReleaseStringUTFChars(romPath, cRomPath);
+    if (corePath != nullptr) env->ReleaseStringUTFChars(corePath, cCorePath);
     return static_cast<jboolean>(success);
 }
 

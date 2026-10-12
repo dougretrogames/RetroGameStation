@@ -42,6 +42,7 @@ class EmulatorHostActivity : AppCompatActivity(), SurfaceHolder.Callback2, Globa
         const val EXTRA_ROM_URI = "extra_rom_uri"
         const val EXTRA_SYSTEM_NAME = "extra_system_name"
         const val EXTRA_CORE_NAME = "extra_core_name"
+        const val EXTRA_CORE_PATH = "extra_core_path"
     }
 
     private lateinit var surfaceView: SurfaceView
@@ -55,6 +56,7 @@ class EmulatorHostActivity : AppCompatActivity(), SurfaceHolder.Callback2, Globa
     private var activeRomDescriptor: ScopedStorageManager.DirectFileDescriptor? = null
     private var currentSystemName: String = "arcade"
     private var currentCoreName: String = "libretro"
+    private var currentCorePath: String = ""
     private var isEmulationRunning = false
     private var isEngineInitialized = false
     private var quickMenuDialog: AlertDialog? = null
@@ -163,6 +165,7 @@ class EmulatorHostActivity : AppCompatActivity(), SurfaceHolder.Callback2, Globa
         }
         currentSystemName = intent?.getStringExtra(EXTRA_SYSTEM_NAME) ?: "arcade"
         currentCoreName = intent?.getStringExtra(EXTRA_CORE_NAME) ?: "libretro"
+        currentCorePath = intent?.getStringExtra(EXTRA_CORE_PATH) ?: ""
 
         if (uri != null) {
             Log.i(TAG, "Opening ROM via SAF content URI: $uri (system: $currentSystemName)")
@@ -225,7 +228,8 @@ class EmulatorHostActivity : AppCompatActivity(), SurfaceHolder.Callback2, Globa
                         systemId = currentSystemName,
                         suggestedCore = activeEngine?.coreType ?: EmulationCore.LIBRETRO,
                         saveDirectory = storageManager.getSaveDirectory(currentSystemName).absolutePath,
-                        stateDirectory = storageManager.getStateDirectory(currentSystemName).absolutePath
+                        stateDirectory = storageManager.getStateDirectory(currentSystemName).absolutePath,
+                        coreFilePath = currentCorePath
                     )
                     activeEngine?.loadRom(romDesc)
                 }
