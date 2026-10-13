@@ -19,7 +19,11 @@ class Mupen64PlusEngineBridge : IGameEngine {
 
     companion object {
         init {
-            System.loadLibrary("retrostation_mupen64plus")
+            try {
+                System.loadLibrary("retrostation_mupen64plus")
+            } catch (e: UnsatisfiedLinkError) {
+                android.util.Log.e("Mupen64PlusEngineBridge", "Failed to load retrostation_mupen64plus: ${e.message}")
+            }
         }
     }
 

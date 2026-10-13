@@ -19,7 +19,11 @@ class LibretroEngineBridge : IGameEngine {
 
     companion object {
         init {
-            System.loadLibrary("retrostation_libretro")
+            try {
+                System.loadLibrary("retrostation_libretro")
+            } catch (e: UnsatisfiedLinkError) {
+                android.util.Log.e("LibretroEngineBridge", "Failed to load retrostation_libretro: ${e.message}")
+            }
         }
     }
 

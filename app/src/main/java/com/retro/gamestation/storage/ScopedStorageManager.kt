@@ -50,6 +50,7 @@ class ScopedStorageManager(private val context: Context) {
 
     init {
         ensureDirectoryStructure()
+        extractAssetsIfNeeded(context)
     }
 
     /**
@@ -69,6 +70,63 @@ class ScopedStorageManager(private val context: Context) {
             if (!dir.exists()) {
                 val created = dir.mkdirs()
                 Log.d(TAG, "Directory ${dir.name} created: $created (${dir.absolutePath})")
+            }
+        }
+    }
+
+    /**
+     * Extrai BIOS, remaps e configurações empacotadas na pasta assets/ para o armazenamento interno.
+     */
+    fun extractAssetsIfNeeded(context: Context) {
+        val prefs = context.getSharedPreferences("rgs_storage_prefs", Context.MODE_PRIVATE)
+        val extractedVersion = prefs.getInt("assets_extracted_version", 0)
+        val currentVersion = 1
+
+        if (extractedVersion < currentVersion) {
+            try {
+                val assetManager = context.assets
+                copyAssetFolder(assetManager, "system", getBiosDirectory())
+                copyAssetFolder(assetManager, "remaps", File(rootFilesDir, "remaps"))
+                prefs.edit().putInt("assets_extracted_version", currentVersion).apply()
+                Log.i(TAG, "Assets (BIOS, System, Remaps) extraídos com sucesso para o armazenamento interno.")
+            } catch (e: Exception) {
+                Log.e(TAG, "Falha ao extrair assets: ${e.message}", e)
+            }
+        }
+    }
+
+    private fun copyAssetFolder(assetManager: android.content.res.AssetManager, assetPath: String, targetDir: File) {
+        val files = try {
+            assetManager.list(assetPath)
+        } catch (_: Exception) {
+            null
+        } ?: return
+
+        if (!targetDir.exists()) targetDir.mkdirs()
+
+        for (file in files) {
+            val subAssetPath = if (assetPath.isEmpty()) file else "$assetPath/$file"
+            val subFiles = try {
+                assetManager.list(subAssetPath)
+            } catch (_: Exception) {
+                null
+            }
+
+            if (subFiles != null && subFiles.isNotEmpty()) {
+                copyAssetFolder(assetManager, subAssetPath, File(targetDir, file))
+            } else {
+                val targetFile = File(targetDir, file)
+                if (!targetFile.exists() || targetFile.length() == 0L) {
+                    try {
+                        assetManager.open(subAssetPath).use { input ->
+                            FileOutputStream(targetFile).use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Não foi possível extrair arquivo de asset $subAssetPath: ${e.message}")
+                    }
+                }
             }
         }
     }

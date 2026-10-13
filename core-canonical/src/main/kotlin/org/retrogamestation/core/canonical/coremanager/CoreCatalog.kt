@@ -90,6 +90,17 @@ object CoreCatalog {
             iconEmoji = "💿"
         ),
         CoreInfo(
+            id = "swanstation",
+            displayName = "SwanStation",
+            systemName = "Sony PlayStation (PS1 / PSX Advanced)",
+            systemId = "psx",
+            fileName = "swanstation_libretro_android.so",
+            zipFileName = "swanstation_libretro_android.so.zip",
+            extensions = listOf(".cue", ".chd", ".pbp", ".iso", ".bin"),
+            description = "Núcleo PSX moderno baseado no DuckStation com renderização HD.",
+            iconEmoji = "🦆"
+        ),
+        CoreInfo(
             id = "fbneo",
             displayName = "FinalBurn Neo",
             systemName = "Arcade / Neo Geo / CPS1 / CPS2 / CPS3",
@@ -112,6 +123,17 @@ object CoreCatalog {
             iconEmoji = "👾"
         ),
         CoreInfo(
+            id = "ppsspp_libretro",
+            displayName = "PPSSPP (Libretro Core)",
+            systemName = "PlayStation Portable (PSP)",
+            systemId = "psp",
+            fileName = "ppsspp_libretro_android.so",
+            zipFileName = "ppsspp_libretro_android.so.zip",
+            extensions = listOf(".iso", ".cso", ".pbp"),
+            description = "Versão Libretro do aclamado emulador de Sony PSP.",
+            iconEmoji = "🕹️"
+        ),
+        CoreInfo(
             id = "melonds",
             displayName = "melonDS",
             systemName = "Nintendo DS (NDS)",
@@ -120,6 +142,17 @@ object CoreCatalog {
             zipFileName = "melonds_libretro_android.so.zip",
             extensions = listOf(".nds"),
             description = "Emulação veloz de telas duplas do Nintendo DS com renderizador OpenGL/Software.",
+            iconEmoji = "📱"
+        ),
+        CoreInfo(
+            id = "desmume",
+            displayName = "DeSmuME",
+            systemName = "Nintendo DS (DeSmuME)",
+            systemId = "nds",
+            fileName = "desmume_libretro_android.so",
+            zipFileName = "desmume_libretro_android.so.zip",
+            extensions = listOf(".nds"),
+            description = "Núcleo clássico e altamente preciso para Nintendo DS.",
             iconEmoji = "📱"
         ),
         CoreInfo(
@@ -165,6 +198,39 @@ object CoreCatalog {
             extensions = listOf(".cdi", ".gdi", ".chd"),
             description = "Núcleo Sega Dreamcast com suporte gráfico a Vulkan e GLES.",
             iconEmoji = "🌀"
+        ),
+        CoreInfo(
+            id = "picodrive",
+            displayName = "PicoDrive",
+            systemName = "Sega 32X / Sega CD / Mega Drive",
+            systemId = "genesis",
+            fileName = "picodrive_libretro_android.so",
+            zipFileName = "picodrive_libretro_android.so.zip",
+            extensions = listOf(".32x", ".cue", ".iso", ".md"),
+            description = "Excelente suporte para add-ons Sega 32X e Sega CD.",
+            iconEmoji = "🦔"
+        ),
+        CoreInfo(
+            id = "sameboy",
+            displayName = "SameBoy",
+            systemName = "Game Boy / Game Boy Color (SameBoy)",
+            systemId = "gb",
+            fileName = "sameboy_libretro_android.so",
+            zipFileName = "sameboy_libretro_android.so.zip",
+            extensions = listOf(".gb", ".gbc"),
+            description = "Emulador extremamente preciso para Game Boy e Game Boy Color.",
+            iconEmoji = "🔋"
+        ),
+        CoreInfo(
+            id = "gearsystem",
+            displayName = "Gearsystem",
+            systemName = "Sega Master System / Game Gear",
+            systemId = "sms",
+            fileName = "gearsystem_libretro_android.so",
+            zipFileName = "gearsystem_libretro_android.so.zip",
+            extensions = listOf(".sms", ".gg"),
+            description = "Emulador preciso de 8-bits da Sega.",
+            iconEmoji = "🎮"
         )
     )
 
@@ -183,5 +249,28 @@ object CoreCatalog {
      */
     fun findCoreById(id: String): CoreInfo? {
         return AVAILABLE_CORES.firstOrNull { it.id.equals(id, ignoreCase = true) }
+    }
+
+    /**
+     * Cria dinamicamente uma definição de CoreInfo para QUALQUER núcleo do Libretro Buildbot.
+     */
+    fun createCustomCore(coreNameInput: String): CoreInfo {
+        val cleanName = coreNameInput.trim()
+            .removeSuffix(".so.zip")
+            .removeSuffix(".so")
+            .removeSuffix("_libretro_android")
+        val fileName = "${cleanName}_libretro_android.so"
+        val zipFileName = "${fileName}.zip"
+        return CoreInfo(
+            id = cleanName,
+            displayName = cleanName.replace("_", " ").split(" ").joinToString(" ") { word -> word.replaceFirstChar { it.uppercase() } },
+            systemName = "Núcleo Libretro Custom ($cleanName)",
+            systemId = cleanName,
+            fileName = fileName,
+            zipFileName = zipFileName,
+            extensions = emptyList(),
+            description = "Núcleo Libretro do Buildbot oficial.",
+            iconEmoji = "📦"
+        )
     }
 }

@@ -20,7 +20,7 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:enableOnBackInvokedCallback="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/Theme.RetroGameStation">
 
         <activity
             android:name="org.retrostation.MainActivity"

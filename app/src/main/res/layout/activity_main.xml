@@ -48,7 +48,7 @@
                     android:id="@+id/tv_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="OneUI 9 / Android 17 Ready • Libretro &amp; Standalones"
+                    android:text="Central de Emulação • Libretro &amp; Standalones"
                     android:textColor="#00F5D4"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -63,7 +63,7 @@
                 android:paddingTop="6dp"
                 android:paddingEnd="12dp"
                 android:paddingBottom="6dp"
-                android:text="ARM64 • 16KB"
+                android:text="ARM64 / x86_64"
                 android:textColor="#F72585"
                 android:textSize="11sp"
                 android:textStyle="bold" />

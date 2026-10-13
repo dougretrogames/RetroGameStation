@@ -19,7 +19,11 @@ class PPSSPPEngineBridge : IGameEngine {
 
     companion object {
         init {
-            System.loadLibrary("retrostation_ppsspp")
+            try {
+                System.loadLibrary("retrostation_ppsspp")
+            } catch (e: UnsatisfiedLinkError) {
+                android.util.Log.e("PPSSPPEngineBridge", "Failed to load retrostation_ppsspp: ${e.message}")
+            }
         }
     }
 

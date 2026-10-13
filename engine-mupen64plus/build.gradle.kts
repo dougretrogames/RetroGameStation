@@ -21,7 +21,7 @@ android {
         externalNativeBuild {
             cmake {
                 arguments(
-                    "-DANDROID_STL=c++_shared",
+                    "-DANDROID_STL=c++_static",
                     "-DCMAKE_BUILD_TYPE=Release",
                     "-DANDROID_PLATFORM=android-26",
                     "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-z,max-page-size=16384"

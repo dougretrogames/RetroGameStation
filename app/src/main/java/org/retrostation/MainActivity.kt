@@ -7,6 +7,7 @@ import android.hardware.input.InputManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.util.Log
 import android.view.InputDevice
 import android.widget.Button
@@ -22,14 +23,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.retro.gamestation.R
 import com.retro.gamestation.ui.EmulatorHostActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.retrogamestation.core.canonical.coremanager.CoreCatalog
 import org.retrogamestation.core.canonical.coremanager.CoreDownloader
 import org.retrogamestation.core.canonical.coremanager.CoreInfo
 
 /**
  * Main Launcher, Diagnostic Dashboard & Core Downloader for Retro Game Station.
- * Fully compatible with Samsung OneUI 9, Android 17 (API 37), and modern 16KB page size hardware (Galaxy S25+).
+ * Supports Storage Access Framework (SAF) Directory Tree and File Selection.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -41,10 +44,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvCoresStatus: TextView
     private lateinit var tvBadgeStatus: TextView
 
-    // SAF Document Picker for selecting ROM files
-    private val romPickerLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+    // SAF Document Picker for selecting individual ROM files
+    private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         if (uri != null) {
-            // Persist read permission across reboots
             try {
                 contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             } catch (e: Exception) {
@@ -54,10 +56,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // SAF Directory Picker for selecting entire ROM folders
+    private val dirPickerLauncher = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not take persistable permission for dir: ${e.message}")
+            }
+
+            getSharedPreferences("rgs_rom_prefs", Context.MODE_PRIVATE)
+                .edit()
+                .putString("saved_rom_directory_uri", uri.toString())
+                .apply()
+
+            showRomsFromDirectory(uri)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. Edge-to-Edge compliance for Android 15/16/17 and OneUI 9
+        // 1. Edge-to-Edge compliance
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContentView(R.layout.activity_main)
@@ -120,7 +143,7 @@ class MainActivity : AppCompatActivity() {
             showVideoSettingsDialog()
         }
 
-        // 5. Predictive back gesture callback for Android 14+ / 17 / OneUI 9
+        // 5. Predictive back gesture callback
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 AlertDialog.Builder(this@MainActivity)
@@ -143,11 +166,10 @@ class MainActivity : AppCompatActivity() {
         val manufacturer = Build.MANUFACTURER.replaceFirstChar { it.uppercase() }
         val model = Build.MODEL
         val androidVersion = Build.VERSION.RELEASE
-        val apiLevel = Build.VERSION.SDK_INT
         val abi = CoreDownloader.resolveDeviceAbi()
 
-        tvDeviceInfo.text = "Dispositivo: $manufacturer $model (Android $androidVersion / API $apiLevel)\nArquitetura: $abi (Primary)"
-        tvBadgeStatus.text = "$abi • 16KB Clean"
+        tvDeviceInfo.text = "Dispositivo: $manufacturer $model (Android $androidVersion)\nArquitetura: $abi"
+        tvBadgeStatus.text = abi
     }
 
     private fun verifyNativeSubsystems() {
@@ -175,7 +197,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (failed.isEmpty()) {
-            tvNativeStatus.text = "Status NDK: ✓ 4 Motores Nativos Integrados (16KB Page Aligned)"
+            tvNativeStatus.text = "Status NDK: ✓ 4 Motores Nativos Integrados"
             tvNativeStatus.setTextColor(android.graphics.Color.parseColor("#00F5D4"))
         } else {
             tvNativeStatus.text = "Status NDK: Carregados: ${loaded.size}/4. Falhas: ${failed.joinToString()}"
@@ -218,13 +240,137 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openRomPicker() {
-        val mimeTypes = arrayOf(
-            "application/zip",
-            "application/x-zip-compressed",
-            "application/octet-stream",
-            "*/*"
+        val prefs = getSharedPreferences("rgs_rom_prefs", Context.MODE_PRIVATE)
+        val savedDirUriString = prefs.getString("saved_rom_directory_uri", null)
+
+        val options = mutableListOf<String>()
+        options.add("📁 Selecionar Pasta / Diretório de ROMs (SAF)")
+        options.add("📄 Selecionar Arquivo de ROM Único")
+
+        if (!savedDirUriString.isNullOrEmpty()) {
+            options.add("📂 Abrir Pasta Salva Anterioremente")
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Carregar Jogos (SAF)")
+            .setItems(options.toTypedArray()) { _, which ->
+                when (which) {
+                    0 -> dirPickerLauncher.launch(null)
+                    1 -> {
+                        val mimeTypes = arrayOf(
+                            "application/zip",
+                            "application/x-zip-compressed",
+                            "application/octet-stream",
+                            "*/*"
+                        )
+                        filePickerLauncher.launch(mimeTypes)
+                    }
+                    2 -> {
+                        val uri = Uri.parse(savedDirUriString)
+                        showRomsFromDirectory(uri)
+                    }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun showRomsFromDirectory(treeUri: Uri) {
+        @Suppress("DEPRECATION")
+        val progressDialog = ProgressDialog(this).apply {
+            setTitle("Escaneando Diretório")
+            setMessage("Buscando jogos compatíveis na pasta selecionada...")
+            setCancelable(false)
+            show()
+        }
+
+        lifecycleScope.launch {
+            val roms = withContext(Dispatchers.IO) {
+                scanTreeDirectory(treeUri)
+            }
+
+            progressDialog.dismiss()
+
+            if (roms.isEmpty()) {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("Nenhuma ROM Encontrada")
+                    .setMessage("Não foram encontrados arquivos de jogos compatíveis (.zip, .sfc, .nes, .iso, .gba, .z64, etc.) no diretório selecionado.")
+                    .setPositiveButton("Selecionar Outra Pasta") { _, _ -> dirPickerLauncher.launch(null) }
+                    .setNegativeButton("Fechar", null)
+                    .show()
+            } else {
+                val romNames = roms.map { "🎮  " + it.first }.toTypedArray()
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("Jogos Encontrados (${roms.size})")
+                    .setItems(romNames) { _, which ->
+                        val selectedRom = roms[which]
+                        handleSelectedRom(selectedRom.second)
+                    }
+                    .setNeutralButton("Trocar Pasta") { _, _ -> dirPickerLauncher.launch(null) }
+                    .setPositiveButton("Fechar", null)
+                    .show()
+            }
+        }
+    }
+
+    private fun scanTreeDirectory(treeUri: Uri): List<Pair<String, Uri>> {
+        val results = mutableListOf<Pair<String, Uri>>()
+        val docId = try {
+            DocumentsContract.getTreeDocumentId(treeUri)
+        } catch (_: Exception) {
+            treeUri.lastPathSegment ?: ""
+        }
+
+        scanDocumentFolder(treeUri, docId, results)
+        return results
+    }
+
+    private fun scanDocumentFolder(treeUri: Uri, folderDocId: String, results: MutableList<Pair<String, Uri>>) {
+        val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, folderDocId)
+        val projection = arrayOf(
+            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+            DocumentsContract.Document.COLUMN_MIME_TYPE
         )
-        romPickerLauncher.launch(mimeTypes)
+
+        try {
+            contentResolver.query(childrenUri, projection, null, null, null)?.use { cursor ->
+                val idIndex = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
+                val nameIndex = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
+                val mimeIndex = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE)
+
+                while (cursor.moveToNext()) {
+                    val docId = cursor.getString(idIndex)
+                    val displayName = cursor.getString(nameIndex) ?: continue
+                    val mimeType = cursor.getString(mimeIndex) ?: ""
+
+                    if (mimeType == DocumentsContract.Document.MIME_TYPE_DIR) {
+                        if (results.size < 300) {
+                            scanDocumentFolder(treeUri, docId, results)
+                        }
+                    } else {
+                        val fileUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, docId)
+                        val ext = if (displayName.contains(".")) "." + displayName.substringAfterLast(".").lowercase() else ""
+                        if (isRomExtension(ext) || mimeType.startsWith("application/")) {
+                            results.add(displayName to fileUri)
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not scan tree document folder $folderDocId: ${e.message}")
+        }
+    }
+
+    private fun isRomExtension(ext: String): Boolean {
+        val valid = setOf(
+            ".sfc", ".smc", ".fig", ".swc", ".nes", ".fds", ".unf",
+            ".md", ".smd", ".gen", ".bin", ".sms", ".gg", ".sg",
+            ".gba", ".gb", ".gbc", ".cue", ".chd", ".pbp", ".iso",
+            ".cso", ".z64", ".n64", ".v64", ".nds", ".zip", ".7z",
+            ".a26", ".pce", ".cdi", ".gdi", ".32x"
+        )
+        return ext.lowercase() in valid
     }
 
     /**
@@ -256,7 +402,6 @@ class MainActivity : AppCompatActivity() {
                 val coreFile = CoreDownloader.getInstalledCoreFile(this, matchedCore)
                 launchEmulatorWithUri(uri, core = matchedCore.id, system = matchedCore.systemId, corePath = coreFile?.absolutePath ?: "")
             } else {
-                // Prompt user to download core
                 AlertDialog.Builder(this)
                     .setTitle("Núcleo Necessário: ${matchedCore.displayName}")
                     .setMessage("A ROM selecionada requer o núcleo de emulação ${matchedCore.displayName} (${matchedCore.systemName}).\n\n" +
@@ -269,7 +414,6 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         } else {
-            // Default generic Libretro core or standalone fallback
             launchEmulatorWithUri(uri, core = "libretro", system = "arcade", corePath = "")
         }
     }
@@ -348,7 +492,31 @@ class MainActivity : AppCompatActivity() {
             .setNeutralButton("⚡ Baixar Pacote Recomendado") { _, _ ->
                 downloadRecommendedCoresPackage()
             }
+            .setNegativeButton("🔍 Outro Núcleo...") { _, _ ->
+                showCustomCoreDownloadDialog()
+            }
             .setPositiveButton("Fechar", null)
+            .show()
+    }
+
+    private fun showCustomCoreDownloadDialog() {
+        val input = android.widget.EditText(this).apply {
+            hint = "Ex: dosbox_pure, prboom, citra, dolphin, yabause"
+            setPadding(48, 32, 48, 32)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Baixar Qualquer Núcleo do Buildbot")
+            .setMessage("Digite o nome do núcleo Libretro (ex: dosbox_pure, prboom, citra, dolphin, yabause):")
+            .setView(input)
+            .setPositiveButton("Baixar") { _, _ ->
+                val name = input.text.toString().trim()
+                if (name.isNotEmpty()) {
+                    val customCore = CoreCatalog.createCustomCore(name)
+                    downloadSingleCore(customCore)
+                }
+            }
+            .setNegativeButton("Cancelar", null)
             .show()
     }
 

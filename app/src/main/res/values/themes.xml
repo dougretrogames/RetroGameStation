@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.AppCompat.NoActionBar" parent="android:Theme.Material.NoActionBar">
+    <style name="Theme.RetroGameStation" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:keepScreenOn">true</item>
     </style>

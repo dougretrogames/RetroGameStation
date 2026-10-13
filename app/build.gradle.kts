@@ -20,13 +20,19 @@ android {
             cmake {
                 cppFlags += "-std=c++17 -O3 -fexceptions"
                 arguments += listOf(
-                    "-DANDROID_STL=c++_shared",
+                    "-DANDROID_STL=c++_static",
                     "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-z,max-page-size=16384"
                 )
             }
         }
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
+        }
+    }
+
+    sourceSets {
+        getByName("main") {
+            assets.srcDirs("../assets")
         }
     }
 
@@ -70,6 +76,7 @@ android {
     packaging {
         jniLibs {
             pickFirsts.addAll(listOf("**/libc++_shared.so"))
+            useLegacyPackaging = false
         }
     }
 
